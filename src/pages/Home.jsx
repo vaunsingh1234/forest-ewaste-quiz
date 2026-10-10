@@ -1,31 +1,45 @@
 import React, { useState } from 'react';
 import { Play, BookOpen, Info, Sparkles, Volume2, Shield, Leaf, Trees, BatteryCharging, ArrowRight, Check } from 'lucide-react';
-import { GRADE_LEVELS, GUIDE_CHARACTERS } from '../data/gradeData';
+import { GUIDE_CHARACTERS } from '../data/gradeData';
 import { playGuideChime, speakGuideText } from '../utils/audio';
 
-const SUGGESTED_CADET_NAMES = ['Eco-Sam', 'Maya Green', 'Sprout Leo', 'Junior Pip', 'Flora Hero'];
+const SUGGESTED_CADET_NAMES = [
+  'Cyber-Ranger',
+  'Circuit-Sam',
+  'Nova-Scout',
+  'Maya Green',
+  'Echo-Zero',
+  'Flora Hero',
+  'Terra-Guard'
+];
 
-export default function Home({ onStart, gameState, navigate }) {
+export default function Home({ onStart, gameState, navigate, updateState }) {
   const [playerName, setPlayerName] = useState(gameState.playerName || '');
-  const [selectedGrade, setSelectedGrade] = useState(gameState.studentGrade || '3rd');
-  const [showHowItWorks, setShowHowItWorks] = useState(false);
   const [crtClicks, setCrtClicks] = useState(0);
-
   const [isHopping, setIsHopping] = useState(false);
 
   const guideChar = GUIDE_CHARACTERS[0]; // Pip the Explorer Frog
-  const currentGradeObj = GRADE_LEVELS.find(g => g.id === selectedGrade) || GRADE_LEVELS[2];
+
+  const handleNameChange = (name) => {
+    setPlayerName(name);
+    if (updateState) {
+      updateState(prev => ({ ...prev, playerName: name }));
+    }
+  };
 
   const handleStart = () => {
     playGuideChime('cheer');
     const name = playerName.trim() || 'Eco Cadet';
-    onStart(name, selectedGrade);
+    if (updateState) {
+      updateState(prev => ({ ...prev, playerName: name }));
+    }
+    onStart(name, gameState.studentGrade || '3rd');
   };
 
   const handlePipClick = () => {
     setIsHopping(true);
     playGuideChime('cheer');
-    speakGuideText(`Ribbit! Hi friend! I'm Pip, your Forest Explorer Guide! Enter your cadet name and pick your class from Class 1 to 5 to start our e-waste rescue mission!`);
+    speakGuideText(`Ribbit! Hi friend! I'm Pip, your Forest Guide! Enter your cadet callsign on the left and start our e-waste rescue mission!`);
     setTimeout(() => setIsHopping(false), 700);
   };
 
@@ -96,7 +110,7 @@ export default function Home({ onStart, gameState, navigate }) {
                 fontWeight: 700,
                 textTransform: 'uppercase',
               }}>
-                Nova Forest Sanctuary • Primary & Middle School Hub
+                Nova Forest Sanctuary • Eco Intelligence Command
               </span>
             </div>
 
@@ -112,8 +126,8 @@ export default function Home({ onStart, gameState, navigate }) {
               color: '#bbf7d0',
               backdropFilter: 'blur(8px)',
             }}>
-              <span>🎒</span>
-              <span>Classes 1st to 5th Standard</span>
+              <span>🛡️</span>
+              <span>Active Biosphere Investigation</span>
             </div>
           </div>
         </div>
@@ -169,126 +183,89 @@ export default function Home({ onStart, gameState, navigate }) {
               }}>
                 An interactive nature sanctuary where every gadget has a second life. 
                 <span style={{ display: 'block', color: '#86efac', marginTop: '0.25rem', fontWeight: 500 }}>
-                  Your decisions help students protect our forests and wildlife from toxic electronic waste.
+                  Your decisions help protect our forests, waterways, and wildlife from toxic electronic waste.
                 </span>
               </p>
 
               {/* SLEEK CADET SETUP SECTION */}
               <div style={{
-                background: 'rgba(6, 26, 16, 0.75)',
-                border: '1px solid rgba(74, 222, 128, 0.3)',
-                borderRadius: '18px',
-                padding: '1rem 1.2rem',
+                background: 'rgba(6, 26, 16, 0.78)',
+                border: '1.5px solid rgba(74, 222, 128, 0.35)',
+                borderRadius: '20px',
+                padding: '1.15rem 1.35rem',
                 backdropFilter: 'blur(16px)',
-                maxWidth: '500px',
-                marginBottom: '1.15rem',
-                boxShadow: '0 10px 30px rgba(0, 0, 0, 0.45)',
+                maxWidth: '520px',
+                marginBottom: '1.25rem',
+                boxShadow: '0 12px 35px rgba(0, 0, 0, 0.55), 0 0 20px rgba(74, 222, 128, 0.1)',
               }}>
                 {/* Cadet Name Input */}
-                <div style={{ marginBottom: '0.75rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.3rem' }}>
-                    <label style={{ fontSize: '0.7rem', color: '#86efac', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
-                      CADET NAME:
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.45rem' }}>
+                    <label style={{ fontSize: '0.72rem', color: '#86efac', fontFamily: 'var(--font-mono)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.4rem', letterSpacing: '0.08em' }}>
+                      <Shield size={13} color="#4ade80" />
+                      CADET CALLSIGN:
                     </label>
-                    <span style={{ fontSize: '0.68rem', color: '#94a3b8' }}>
-                      {currentGradeObj.standard} Cadet
+                    <span style={{ fontSize: '0.66rem', color: '#86efac', fontFamily: 'var(--font-mono)', background: 'rgba(74, 222, 128, 0.12)', padding: '2px 8px', borderRadius: '100px', border: '1px solid rgba(74, 222, 128, 0.25)', fontWeight: 600 }}>
+                      ECO RESPONSE UNIT
                     </span>
                   </div>
 
                   <input
                     type="text"
                     value={playerName}
-                    onChange={e => setPlayerName(e.target.value)}
+                    onChange={e => handleNameChange(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleStart()}
-                    placeholder="Enter your cadet name (e.g. Eco-Sam)..."
+                    placeholder="Enter your cadet name (e.g. Cyber-Ranger)..."
                     maxLength={25}
+                    id="cadet-name-input"
                     style={{
                       width: '100%',
-                      background: 'rgba(3, 14, 8, 0.75)',
-                      border: '1.5px solid rgba(74, 222, 128, 0.3)',
-                      borderRadius: '10px',
-                      padding: '0.5rem 0.85rem',
+                      background: 'rgba(3, 14, 8, 0.85)',
+                      border: '1.5px solid rgba(74, 222, 128, 0.35)',
+                      borderRadius: '12px',
+                      padding: '0.65rem 0.95rem',
                       color: '#f0fdf4',
-                      fontSize: '0.85rem',
+                      fontSize: '0.92rem',
+                      fontFamily: 'var(--font-mono)',
                       outline: 'none',
-                      transition: 'border-color 0.2s',
+                      transition: 'all 0.2s',
                     }}
-                    onFocus={e => e.target.style.borderColor = '#4ade80'}
-                    onBlur={e => e.target.style.borderColor = 'rgba(74, 222, 128, 0.3)'}
+                    onFocus={e => {
+                      e.target.style.borderColor = '#4ade80';
+                      e.target.style.boxShadow = '0 0 15px rgba(74, 222, 128, 0.25)';
+                    }}
+                    onBlur={e => {
+                      e.target.style.borderColor = 'rgba(74, 222, 128, 0.35)';
+                      e.target.style.boxShadow = 'none';
+                    }}
                   />
 
                   {/* Suggested Quick Nicknames */}
-                  <div style={{ display: 'flex', gap: '0.35rem', marginTop: '0.35rem', flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.65rem', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '0.66rem', color: '#94a3b8', fontFamily: 'var(--font-mono)' }}>Quick Pick:</span>
                     {SUGGESTED_CADET_NAMES.map(name => (
                       <button
                         key={name}
                         type="button"
                         onClick={() => {
                           playGuideChime('pop');
-                          setPlayerName(name);
+                          handleNameChange(name);
                         }}
                         style={{
                           background: playerName === name ? 'rgba(74, 222, 128, 0.3)' : 'rgba(255, 255, 255, 0.05)',
                           border: playerName === name ? '1px solid #4ade80' : '1px solid rgba(255, 255, 255, 0.1)',
                           color: playerName === name ? '#4ade80' : '#bbf7d0',
                           borderRadius: '100px',
-                          padding: '1px 7px',
-                          fontSize: '0.66rem',
+                          padding: '2px 9px',
+                          fontSize: '0.68rem',
+                          fontFamily: 'var(--font-mono)',
                           cursor: 'pointer',
+                          transition: 'all 0.15s ease',
                         }}
                       >
                         {name}
                       </button>
                     ))}
-                  </div>
-                </div>
-
-                {/* School Class Selector (Classes 1st to 5th) */}
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
-                    <span style={{ fontSize: '0.7rem', color: '#86efac', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
-                      SELECT CLASS (PRIMARY STANDARD):
-                    </span>
-                    <span style={{ fontSize: '0.68rem', color: '#4ade80', fontWeight: 600 }}>
-                      {currentGradeObj.standard} • {currentGradeObj.name}
-                    </span>
-                  </div>
-
-                  <div style={{ display: 'flex', gap: '0.35rem' }}>
-                    {GRADE_LEVELS.map(g => {
-                      const isSel = selectedGrade === g.id;
-                      return (
-                        <button
-                          key={g.id}
-                          type="button"
-                          onClick={() => {
-                            playGuideChime('pop');
-                            setSelectedGrade(g.id);
-                          }}
-                          style={{
-                            flex: 1,
-                            padding: '0.4rem 0.2rem',
-                            borderRadius: '10px',
-                            border: isSel ? '1.5px solid #4ade80' : '1px solid rgba(255, 255, 255, 0.12)',
-                            background: isSel ? 'rgba(74, 222, 128, 0.25)' : 'rgba(4, 16, 10, 0.6)',
-                            color: isSel ? '#ffffff' : '#bbf7d0',
-                            fontSize: '0.75rem',
-                            fontWeight: 700,
-                            cursor: 'pointer',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            gap: '2px',
-                            boxShadow: isSel ? '0 0 12px rgba(74, 222, 128, 0.35)' : 'none',
-                            transform: isSel ? 'scale(1.04)' : 'scale(1)',
-                            transition: 'all 0.15s',
-                          }}
-                        >
-                          <span>{g.icon}</span>
-                          <span style={{ fontSize: '0.65rem' }}>{g.standard}</span>
-                        </button>
-                      );
-                    })}
                   </div>
                 </div>
               </div>
@@ -402,7 +379,7 @@ export default function Home({ onStart, gameState, navigate }) {
                 </div>
 
                 <p style={{ margin: 0, fontSize: '0.84rem', color: '#f0fdf4', lineHeight: 1.45 }}>
-                  "Ribbit! Welcome, Young Ranger! Enter your name & select your class on the left, then click Start Mission to explore Nova Sanctuary with me!"
+                  "Ribbit! Welcome, Cadet! Choose your callsign on the left and click Start Mission to explore Nova Sanctuary with me!"
                 </p>
 
                 {/* Downward speech bubble pointer tail pointing down to Pip */}
@@ -541,7 +518,7 @@ export default function Home({ onStart, gameState, navigate }) {
           {/* Minimalist Footer Copyright (matching reference) */}
           <div style={{
             textAlign: 'center',
-            marginTop: '1.5rem',
+            marginTop: '1.25rem',
             fontSize: '0.75rem',
             color: 'rgba(255, 255, 255, 0.55)',
             letterSpacing: '0.02em',
@@ -550,100 +527,19 @@ export default function Home({ onStart, gameState, navigate }) {
             <div style={{ fontSize: '0.68rem', marginTop: '0.2rem', color: 'rgba(255, 255, 255, 0.4)' }}>
               E-Waste: The Last Device • Copyright © 2026. All rights reserved.
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3-STEP JUNIOR E-WASTE GUIDE (CLASS 1ST TO 5TH) */}
-      <section style={{ padding: '4rem 1.5rem 3.5rem', background: '#05140b' }}>
-        <div className="container" style={{ maxWidth: '1100px' }}>
-          <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: '#4ade80', letterSpacing: '0.15em', fontWeight: 700 }}>
-              JUNIOR ECO-LESSONS
-            </span>
-            <h2 style={{ fontSize: 'clamp(1.6rem, 3.2vw, 2.3rem)', fontWeight: 800, color: '#f0fdf4', marginTop: '0.35rem' }}>
-              Why E-Waste Awareness Matters for School Kids 🌱
-            </h2>
-          </div>
-
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-            gap: '1.5rem',
-          }}>
-            {[
-              {
-                step: '01',
-                emoji: '📱',
-                title: 'What Counts as E-Waste?',
-                desc: 'Any toy that lights up, broken video game controller, remote, dead phone, or old battery! If it has a wire or battery, it is an electronic item.',
-                color: '#4ade80',
-              },
-              {
-                step: '02',
-                emoji: '☠️',
-                title: 'Never Throw in the Dustbin!',
-                desc: 'Ordinary trash trucks smash everything! Broken batteries leak poisonous chemicals (like Lithium and Lead) into dirt, making trees and drinking water sick.',
-                color: '#f87171',
-              },
-              {
-                step: '03',
-                emoji: '♻️',
-                title: 'The Eco-Hero Action',
-                desc: 'First try to fix it, or give it to a younger friend! If it is truly broken, bring it to certified Green Recycle Centers where gold and copper are safely saved!',
-                color: '#60a5fa',
-              },
-            ].map(item => (
-              <div
-                key={item.step}
-                className="bio-card"
-                style={{
-                  background: 'rgba(8, 25, 16, 0.85)',
-                  border: '1.5px solid rgba(74, 222, 128, 0.25)',
-                  borderRadius: '20px',
-                  padding: '1.6rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.75rem',
-                }}
+            <div style={{ marginTop: '0.4rem' }}>
+              <button
+                className="btn btn-ghost btn-sm"
+                onClick={() => navigate('admin')}
+                style={{ fontSize: '0.7rem', color: 'rgba(110, 231, 183, 0.65)', gap: '4px', padding: '2px 8px' }}
+                id="home-admin-footer-btn"
               >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '2.2rem' }}>{item.emoji}</span>
-                  <span style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.75rem',
-                    color: item.color,
-                    background: 'rgba(0, 0, 0, 0.4)',
-                    padding: '2px 8px',
-                    borderRadius: '100px',
-                    fontWeight: 700,
-                  }}>
-                    STEP {item.step}
-                  </span>
-                </div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f0fdf4', margin: 0 }}>
-                  {item.title}
-                </h3>
-                <p style={{ fontSize: '0.88rem', color: '#bbf7d0', lineHeight: 1.6, margin: 0 }}>
-                  {item.desc}
-                </p>
-              </div>
-            ))}
+                🔒 Teacher & Admin Control Center (/admin)
+              </button>
+            </div>
           </div>
         </div>
       </section>
-
-      {/* Admin Link at the very bottom */}
-      <div style={{ padding: '1rem', textAlign: 'center', background: '#030c07' }}>
-        <button
-          className="btn btn-ghost btn-sm"
-          onClick={() => navigate('admin')}
-          style={{ fontSize: '0.75rem', color: '#6ee7b7', gap: '6px' }}
-          id="home-admin-footer-btn"
-        >
-          🔒 Teacher & Admin Control Center (/admin)
-        </button>
-      </div>
 
       {/* Hidden CRT Easter Egg */}
       <div

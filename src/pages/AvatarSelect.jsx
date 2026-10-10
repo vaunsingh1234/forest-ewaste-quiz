@@ -73,7 +73,7 @@ export default function AvatarSelect({ gameState, updateAvatar, onProceed, navig
     };
     updateAvatar(finalAvatar);
     if (onProceed) {
-      onProceed(playerName.trim() || 'Officer Nova', finalAvatar);
+      onProceed(gameState.playerName || playerName || 'Eco Cadet', finalAvatar);
     } else {
       navigate('briefing');
     }
@@ -323,52 +323,6 @@ export default function AvatarSelect({ gameState, updateAvatar, onProceed, navig
                 );
               })}
             </div>
-
-            {/* Selected Gear Stats Card */}
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.03)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '18px',
-              padding: '1rem',
-              marginTop: 'auto',
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
-                <span style={{ fontWeight: 700, fontSize: '0.9375rem', color: '#f8fafc' }}>
-                  {selectedHeadgear.name}
-                </span>
-                <span style={{
-                  fontSize: '0.6875rem',
-                  fontFamily: 'var(--font-mono)',
-                  fontWeight: 700,
-                  color: selectedHeadgear.rarityColor,
-                  background: `${selectedHeadgear.rarityColor}20`,
-                  border: `1px solid ${selectedHeadgear.rarityColor}40`,
-                  padding: '0.15rem 0.55rem',
-                  borderRadius: '100px',
-                }}>
-                  {selectedHeadgear.rarity}
-                </span>
-              </div>
-              <p style={{ margin: '0 0 0.6rem', fontSize: '0.78rem', color: '#94a3b8', lineHeight: 1.4 }}>
-                {selectedHeadgear.desc}
-              </p>
-              <div style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                background: 'rgba(0, 214, 143, 0.12)',
-                border: '1px solid rgba(0, 214, 143, 0.3)',
-                padding: '0.3rem 0.75rem',
-                borderRadius: '8px',
-                color: '#00d68f',
-                fontSize: '0.75rem',
-                fontFamily: 'var(--font-mono)',
-                fontWeight: 600,
-              }}>
-                <Zap size={13} />
-                <span>PERK: {selectedHeadgear.bonus}</span>
-              </div>
-            </div>
           </div>
 
           {/* Right Column: 3D Character Podium Stage */}
@@ -503,7 +457,7 @@ export default function AvatarSelect({ gameState, updateAvatar, onProceed, navig
                       color: '#ffffff',
                       textShadow: '0 2px 10px rgba(0,0,0,0.8)',
                     }}>
-                      {playerName || 'Officer Nova'}
+                      {gameState.playerName || playerName || 'Eco Cadet'}
                     </div>
                   </div>
 
@@ -520,117 +474,9 @@ export default function AvatarSelect({ gameState, updateAvatar, onProceed, navig
                       padding: '0.4rem 0.75rem',
                       textAlign: 'center',
                     }}>
-                      <div style={{ fontSize: '0.625rem', fontFamily: 'var(--font-mono)', color: '#94a3b8' }}>BONUS PERK</div>
-                      <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#38bdf8' }}>{selectedHeadgear.tag}</div>
+                      <div style={{ fontSize: '0.625rem', fontFamily: 'var(--font-mono)', color: '#94a3b8' }}>SELECTED GEAR</div>
+                      <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#38bdf8' }}>{selectedHeadgear.name}</div>
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Customizer Controls: Officer Name & Archetype Outfits */}
-            <div style={{
-              background: 'linear-gradient(180deg, rgba(17, 28, 54, 0.95) 0%, rgba(10, 17, 34, 0.98) 100%)',
-              border: '1px solid rgba(255, 255, 255, 0.09)',
-              borderRadius: '24px',
-              padding: '1.25rem 1.5rem',
-              boxShadow: '0 10px 30px rgba(0,0,0,0.4)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '1rem',
-            }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'minmax(200px, 1fr) 1.5fr', gap: '1.25rem', alignItems: 'center' }}>
-                {/* Officer Name Input */}
-                <div>
-                  <label style={{
-                    display: 'block',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.6875rem',
-                    color: '#94a3b8',
-                    letterSpacing: '0.1em',
-                    marginBottom: '0.4rem',
-                    fontWeight: 600,
-                  }}>
-                    OFFICER CODENAME
-                  </label>
-                  <input
-                    type="text"
-                    value={playerName}
-                    onChange={(e) => setPlayerName(e.target.value)}
-                    placeholder="Enter codename..."
-                    maxLength={24}
-                    style={{
-                      width: '100%',
-                      background: 'rgba(255,255,255,0.05)',
-                      border: '1px solid rgba(255,255,255,0.12)',
-                      borderRadius: '12px',
-                      padding: '0.65rem 0.9rem',
-                      color: '#ffffff',
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.9rem',
-                      outline: 'none',
-                      transition: 'border-color 0.2s',
-                    }}
-                    onFocus={(e) => e.target.style.borderColor = '#00d68f'}
-                    onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.12)'}
-                  />
-                </div>
-
-                {/* Outfit Archetype Selector */}
-                <div>
-                  <label style={{
-                    display: 'block',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.6875rem',
-                    color: '#94a3b8',
-                    letterSpacing: '0.1em',
-                    marginBottom: '0.4rem',
-                    fontWeight: 600,
-                  }}>
-                    EQUIPMENT SUIT THEME
-                  </label>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem' }}>
-                    {AVATAR_OUTFITS.map((outfit) => {
-                      const isActive = selectedOutfitId === outfit.id;
-                      return (
-                        <button
-                          key={outfit.id}
-                          onClick={() => handleSelectOutfit(outfit)}
-                          style={{
-                            background: isActive ? `${outfit.color}25` : 'rgba(255,255,255,0.04)',
-                            border: isActive ? `2px solid ${outfit.color}` : '1px solid rgba(255,255,255,0.08)',
-                            borderRadius: '12px',
-                            padding: '0.5rem 0.25rem',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            gap: '0.25rem',
-                            transition: 'all 0.15s ease',
-                          }}
-                        >
-                          <div style={{
-                            width: '12px',
-                            height: '12px',
-                            borderRadius: '50%',
-                            background: outfit.color,
-                            boxShadow: isActive ? `0 0 8px ${outfit.color}` : 'none',
-                          }} />
-                          <span style={{
-                            fontSize: '0.65rem',
-                            fontFamily: 'var(--font-mono)',
-                            color: isActive ? '#ffffff' : '#94a3b8',
-                            fontWeight: 600,
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            maxWidth: '90%',
-                          }}>
-                            {outfit.name.split(' ')[0]}
-                          </span>
-                        </button>
-                      );
-                    })}
                   </div>
                 </div>
               </div>

@@ -238,11 +238,11 @@ export default function Results({ gameState, getRank, timer, navigate, onReset }
                     padding: '2px 8px',
                     borderRadius: '100px',
                   }}>
-                    CLASS {gameState.studentGrade || '3rd'} GRADUATE
+                    ECO CADET GRADUATE
                   </span>
                 </div>
                 <p style={{ margin: '0.35rem 0 0', fontSize: '0.88rem', color: '#bbf7d0', lineHeight: 1.55 }}>
-                  "Congratulations {gameState.playerName || 'Cadet'}! You proved that school students can be the best protectors of planet Earth. Remember: always tell your classmates and family never to throw gadgets with batteries in ordinary dustbins!"
+                  "Congratulations {gameState.playerName || 'Cadet'}! You proved that citizens and rangers are the best protectors of planet Earth. Remember: always ensure gadgets with batteries and circuits never end up in ordinary landfills!"
                 </p>
               </div>
             </div>

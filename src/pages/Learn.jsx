@@ -27,14 +27,14 @@ export default function Learn({ navigate }) {
             LEARN BEFORE YOU PLAY 🌱
           </h1>
           <p style={{ color: '#bbf7d0', fontSize: '0.9375rem', maxWidth: '620px', lineHeight: 1.7 }}>
-            Designed specifically for school students from Class 1st to 5th standard! Understand e-waste essentials, toxic chemicals, and practical recycling.
+            Comprehensive field manual for Nova City Eco-Cadets! Master e-waste essentials, toxic chemicals, and practical recycling.
           </p>
         </div>
 
         {/* Tab switcher */}
         <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', padding: '4px', background: 'rgba(255,255,255,0.04)', borderRadius: 'var(--radius-lg)', width: 'fit-content' }}>
           {[
-            { id: 'grades', label: '🎒 Primary Standards 1–5' },
+            { id: 'grades', label: '🌱 Core Directives' },
             { id: 'topics', label: '📚 Science Topics' },
             { id: 'actions', label: '🌍 Real World Actions' },
           ].map(tab => (
@@ -87,10 +87,10 @@ export default function Learn({ navigate }) {
               </div>
               <div>
                 <h2 style={{ fontSize: '1.1rem', margin: 0, color: '#f0fdf4', fontWeight: 800 }}>
-                  Pip's Junior Curriculum: Primary Classes 1st to 5th
+                  Pip's Environmental Field Manual: Core E-Waste Directives
                 </h2>
                 <p style={{ margin: '0.25rem 0 0', fontSize: '0.86rem', color: '#bbf7d0', lineHeight: 1.5 }}>
-                  Here is what students learn in each grade! Click any class to read or listen to Pip explain why e-waste recycling is a planet-saving superpower.
+                  Explore core knowledge modules on electronic waste, toxic hazards, resource recovery, and the circular economy. Click any module to listen to Pip explain!
                 </p>
               </div>
             </div>
@@ -115,10 +115,10 @@ export default function Learn({ navigate }) {
                       <span style={{ fontSize: '2rem' }}>{g.icon}</span>
                       <div>
                         <div style={{ fontWeight: 800, fontSize: '1.1rem', color: '#f0fdf4' }}>
-                          {g.standard} • {g.name}
+                          Module {g.id} • {g.name}
                         </div>
                         <div style={{ fontSize: '0.72rem', color: '#86efac', fontFamily: 'var(--font-mono)' }}>
-                          {g.ageRange} • Badge: {g.badge}
+                          Directive: {g.badge}
                         </div>
                       </div>
                     </div>
@@ -126,7 +126,7 @@ export default function Learn({ navigate }) {
                     <button
                       onClick={() => {
                         playGuideChime('hint');
-                        speakGuideText(`${g.standard}: ${g.description}. ${g.eWasteConcept}. ${g.superRule}`);
+                        speakGuideText(`${g.name}: ${g.description}. ${g.eWasteConcept}. ${g.superRule}`);
                       }}
                       title="Read aloud with Pip"
                       style={{

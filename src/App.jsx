@@ -18,6 +18,8 @@ import FinalMystery from './pages/FinalMystery';
 import Results from './pages/Results';
 import Learn from './pages/Learn';
 import ImpactDashboard from './pages/ImpactDashboard';
+import AchievementsPage from './pages/AchievementsPage';
+import Leaderboard from './pages/Leaderboard';
 import { LEVELS } from './data/locations';
 import UnlockModal from './components/UnlockModal';
 import AdminLogin from './pages/AdminLogin';
@@ -65,8 +67,16 @@ export default function App() {
     }
   }, [timer.isRunning, timer.timeRemaining]);
 
-  // Loading screen
+  // Loading screen & routing
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const queryPage = urlParams.get('page');
+    if (queryPage) {
+      setIsLoaded(true);
+      setCurrentPage(queryPage);
+      return;
+    }
+
     const timeout = setTimeout(() => {
       setIsLoaded(true);
       if (gameState.gameStarted && !gameState.gameCompleted) {
@@ -195,7 +205,12 @@ export default function App() {
 
       <main style={{ paddingTop: inMission ? '8rem' : '4rem' }}>
         {currentPage === 'home' && (
-          <Home onStart={handleStartMission} gameState={gameState} navigate={navigate} />
+          <Home
+            onStart={handleStartMission}
+            gameState={gameState}
+            navigate={navigate}
+            updateState={updateState}
+          />
         )}
         {currentPage === 'avatar_select' && (
           <AvatarSelect

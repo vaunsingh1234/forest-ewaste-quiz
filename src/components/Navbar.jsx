@@ -184,26 +184,28 @@ export default function Navbar({ currentPage, navigate, gameState, inMission, on
             />
           </div>
           <span style={{
-            fontSize: '0.72rem',
+            fontSize: '0.74rem',
             fontFamily: 'var(--font-mono)',
             fontWeight: 700,
             color: '#f0fdf4',
-            maxWidth: '90px',
+            maxWidth: '120px',
             whiteSpace: 'nowrap',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
           }}>
-            {gameState.playerName || 'Eco Cadet'}
+            {gameState.playerName?.trim() ? gameState.playerName : 'Eco Cadet'}
           </span>
           <span style={{
             fontSize: '0.62rem',
-            background: 'rgba(74, 222, 128, 0.25)',
+            background: 'rgba(74, 222, 128, 0.2)',
+            border: '1px solid rgba(74, 222, 128, 0.35)',
             color: '#86efac',
             fontWeight: 800,
-            padding: '1px 5px',
+            padding: '1px 6px',
             borderRadius: '100px',
+            letterSpacing: '0.04em',
           }}>
-            {gameState.studentGrade || '3rd'}
+            CADET
           </span>
         </button>
 

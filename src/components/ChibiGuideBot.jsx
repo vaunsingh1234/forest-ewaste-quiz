@@ -8,7 +8,7 @@ const PAGE_GUIDE_PROMPTS = {
   home: {
     mood: 'happy',
     title: 'Cadet Registration Guide',
-    text: 'Ribbit! Hi friend! 🐸 Welcome to the E-Waste Detective Squad! Step 1: Type your name above. Step 2: Pick your school class (Class 1 to 5). Then click "CHOOSE AVATAR & START" to gear up!',
+    text: 'Ribbit! Hi friend! 🐸 Welcome to the E-Waste Detective Squad! Step 1: Type your cadet callsign above. Step 2: Click "START MISSION" to gear up with your eco-suit and enter Nova City!',
     hint: 'E-Waste means old or broken electronics like dead remotes, cracked phones, and toys with batteries. Never toss them in ordinary trash cans!',
   },
   avatar_select: {
@@ -250,21 +250,8 @@ export default function ChibiGuideBot({
 
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                    <span style={{ fontWeight: 800, fontSize: '0.9rem', color: '#f0fdf4', letterSpacing: '0.02em' }}>
+                    <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#f0fdf4', letterSpacing: '0.02em' }}>
                       Pip
-                    </span>
-                    <span
-                      style={{
-                        background: 'rgba(74, 222, 128, 0.2)',
-                        color: '#4ade80',
-                        fontSize: '0.65rem',
-                        fontWeight: 700,
-                        padding: '1px 6px',
-                        borderRadius: '100px',
-                        border: '1px solid rgba(74, 222, 128, 0.4)',
-                      }}
-                    >
-                      {gradeObj.standard}
                     </span>
                   </div>
                   <div style={{ fontSize: '0.68rem', color: '#86efac', fontFamily: 'var(--font-mono)' }}>
@@ -316,7 +303,7 @@ export default function ChibiGuideBot({
               </div>
             </div>
 
-            {/* Quick Navigation Tabs: Guide Speech, Hint, Grade Changer, Facts */}
+            {/* Quick Navigation Tabs: Guide Speech, Hint, Facts */}
             <div
               style={{
                 display: 'flex',
@@ -330,7 +317,6 @@ export default function ChibiGuideBot({
               {[
                 { id: 'guide', label: 'Guide', icon: Sparkles },
                 { id: 'hint', label: 'Clue', icon: Lightbulb },
-                { id: 'grade', label: 'My Class', icon: BookOpen },
                 { id: 'facts', label: 'Eco Fact', icon: HelpCircle },
               ].map(tab => {
                 const Icon = tab.icon;
@@ -389,38 +375,6 @@ export default function ChibiGuideBot({
                     )}
                   </p>
                 </div>
-
-                {/* Sub-pill banner for Grade 1-5 students */}
-                <div
-                  style={{
-                    marginTop: '0.65rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '0.4rem 0.75rem',
-                    background: 'rgba(34, 197, 94, 0.1)',
-                    borderRadius: '10px',
-                    border: '1px solid rgba(34, 197, 94, 0.2)',
-                    fontSize: '0.72rem',
-                    color: '#86efac',
-                  }}
-                >
-                  <span>🎒 {gradeObj.standard} ({gradeObj.name}):</span>
-                  <button
-                    onClick={() => setActiveTab('grade')}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: '#4ade80',
-                      textDecoration: 'underline',
-                      cursor: 'pointer',
-                      fontSize: '0.7rem',
-                      fontWeight: 600,
-                    }}
-                  >
-                    Change Class
-                  </button>
-                </div>
               </div>
             )}
 
@@ -440,51 +394,6 @@ export default function ChibiGuideBot({
                 <p style={{ margin: 0, fontSize: '0.82rem', color: '#fef3c7', lineHeight: 1.55 }}>
                   {pagePrompt.hint}
                 </p>
-              </div>
-            )}
-
-            {activeTab === 'grade' && (
-              <div>
-                <div style={{ fontSize: '0.75rem', color: '#86efac', marginBottom: '0.5rem', fontWeight: 600 }}>
-                  Select your school class (Primary Standards 1 to 5):
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0.4rem', maxHeight: '170px', overflowY: 'auto' }}>
-                  {GRADE_LEVELS.map(g => {
-                    const isCurrent = g.id === studentGrade;
-                    return (
-                      <button
-                        key={g.id}
-                        onClick={() => handleSelectGrade(g.id)}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          padding: '0.45rem 0.75rem',
-                          borderRadius: '10px',
-                          border: isCurrent ? '1.5px solid #4ade80' : '1px solid rgba(255, 255, 255, 0.1)',
-                          background: isCurrent ? 'rgba(74, 222, 128, 0.2)' : 'rgba(255, 255, 255, 0.03)',
-                          color: '#f0fdf4',
-                          cursor: 'pointer',
-                          textAlign: 'left',
-                          fontSize: '0.75rem',
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          <span style={{ fontSize: '1rem' }}>{g.icon}</span>
-                          <div>
-                            <div style={{ fontWeight: 700, color: isCurrent ? '#4ade80' : '#ffffff' }}>
-                              {g.standard} — {g.name}
-                            </div>
-                            <div style={{ fontSize: '0.65rem', color: '#94a3b8' }}>
-                              {g.ageRange}
-                            </div>
-                          </div>
-                        </div>
-                        {isCurrent && <Check size={14} color="#4ade80" />}
-                      </button>
-                    );
-                  })}
-                </div>
               </div>
             )}
 
