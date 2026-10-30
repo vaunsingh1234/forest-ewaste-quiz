@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Shield, AlertTriangle } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { ChevronLeft, ChevronRight, Shield, AlertTriangle, X, CheckCircle, Sparkles } from 'lucide-react';
 
 // Puzzle 2: Recycling Code Breaker
 const CODE_SYMBOLS = [
@@ -11,61 +12,79 @@ const CODE_SYMBOLS = [
 ];
 
 const ROUTES = [
-  { id: 'battery-center', label: 'Battery Collection Center', correct: true },
-  { id: 'general-recycle', label: 'General Recycling Bin', correct: false },
-  { id: 'landfill', label: 'Municipal Landfill', correct: false },
-  { id: 'incinerator', label: 'Waste Incinerator', correct: false },
+  { id: 'battery-center', label: 'A. Battery Collection Center', correct: true },
+  { id: 'general-recycle', label: 'B. General Recycling Bin', correct: false },
+  { id: 'landfill', label: 'C. Municipal Landfill', correct: false },
+  { id: 'incinerator', label: 'D. Waste Incinerator', correct: false },
 ];
 
 // Data wipe steps
 const WIPE_STEPS = [
-  { label: 'Scanning device storage...', duration: 1200 },
-  { label: 'Encrypting existing data...', duration: 1500 },
-  { label: 'Removing personal files...', duration: 2000 },
-  { label: 'Clearing browser history & passwords...', duration: 1500 },
-  { label: 'Verifying data removal...', duration: 1200 },
+  { label: 'Scanning device storage sectors...', duration: 1000 },
+  { label: 'Cryptographic data erasure in progress...', duration: 1200 },
+  { label: 'Removing personal credentials & files...', duration: 1400 },
+  { label: 'Zeroing flash storage blocks...', duration: 1100 },
+  { label: 'Verifying complete data removal...', duration: 900 },
   { label: 'DEVICE READY FOR RECYCLING', duration: 0, final: true },
 ];
 
 export default function ResidentialBlock({ gameState, recordDecision, completePuzzle, onComplete, navigate }) {
-  const [phase, setPhase] = useState('scene'); // scene | code-puzzle | data-puzzle | complete
-  const [codePuzzleSolved, setCodePuzzleSolved] = useState(gameState.completedPuzzles.includes('recycling-code'));
-  const [dataPuzzleSolved, setDataPuzzleSolved] = useState(gameState.completedPuzzles.includes('data-wipe'));
+  const [phase, setPhase] = useState('scene'); // scene | code-puzzle | data-puzzle
+  const [codePuzzleSolved, setCodePuzzleSolved] = useState(gameState?.completedPuzzles?.includes('recycling-code') || false);
+  const [dataPuzzleSolved, setDataPuzzleSolved] = useState(gameState?.completedPuzzles?.includes('data-wipe') || false);
 
   const allDone = codePuzzleSolved && dataPuzzleSolved;
 
   return (
-    <div className="page-enter" style={{ padding: '2rem 0 4rem' }}>
-      <div className="container">
+    <div className="page-enter residential-page" style={{
+      minHeight: '100dvh',
+      padding: 'calc(var(--safe-top, 0px) + 0.75rem) 0.75rem calc(var(--bottom-nav-total-height, 70px) + 1.5rem)',
+      background: 'radial-gradient(ellipse at top, #0f2419 0%, #030d07 85%)',
+      color: '#f0fdf4',
+      overflowX: 'hidden',
+    }}>
+      <div className="container" style={{ maxWidth: '640px', margin: '0 auto', padding: '0 0.25rem' }}>
+        
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
-          <button className="btn btn-ghost btn-sm" onClick={() => navigate('map')} style={{ gap: '0.25rem' }}>
-            <ChevronLeft size={14} /> MAP
-          </button>
-          <div>
-            <div className="data-label">LOCATION 02</div>
-            <h1 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-display)', letterSpacing: '0.05em' }}>
-              🏘️ RESIDENTIAL BLOCK
-            </h1>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            <button
+              className="btn btn-ghost"
+              onClick={() => navigate('map')}
+              style={{ minHeight: '44px', minWidth: '44px', padding: '0.4rem 0.75rem', gap: '0.25rem', fontSize: '0.875rem' }}
+            >
+              <ChevronLeft size={16} /> MAP
+            </button>
+            <div>
+              <div className="data-label" style={{ color: '#4ade80', fontSize: '0.75rem', letterSpacing: '0.08em' }}>
+                LOCATION 02
+              </div>
+              <h1 style={{ fontSize: '1.2rem', fontFamily: 'var(--font-display)', margin: 0, fontWeight: 800 }}>
+                🏘️ RESIDENTIAL BLOCK
+              </h1>
+            </div>
           </div>
-          <div style={{ marginLeft: 'auto' }}>
-            <span className="badge badge-amber">HIGH ALERT</span>
+
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            <span className="badge badge-amber" style={{ fontSize: '0.75rem', padding: '4px 8px' }}>HIGH ALERT</span>
           </div>
         </div>
 
         {phase === 'scene' && (
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            
+            {/* Status & Briefing Card */}
             <div style={{
-              background: 'var(--bg-card)',
-              border: '1px solid var(--border-card)',
-              borderRadius: 'var(--radius-xl)',
-              padding: '1.5rem',
-              marginBottom: '1.5rem',
+              background: 'rgba(6, 30, 18, 0.75)',
+              border: '1.5px solid rgba(74, 222, 128, 0.25)',
+              borderRadius: '20px',
+              padding: '1.25rem',
+              backdropFilter: 'blur(10px)',
             }}>
               <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '1rem' }}>
                 <div className="status-dot status-dot-amber" />
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: '#86efac' }}>
-                  RESIDENTIAL SANCTUARY — INVESTIGATION REQUIRED
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.875rem', color: '#86efac', fontWeight: 600 }}>
+                  RESIDENTIAL SANCTUARY — INVESTIGATION
                 </span>
               </div>
 
@@ -75,106 +94,142 @@ export default function ResidentialBlock({ gameState, recordDecision, completePu
                 border: '1.5px solid rgba(74, 222, 128, 0.35)',
                 borderRadius: '16px',
                 padding: '0.85rem 1.15rem',
-                marginBottom: '1.25rem',
+                marginBottom: '1rem',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.85rem',
               }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', border: '2px solid #4ade80', flexShrink: 0 }}>
+                <div style={{ width: '44px', height: '44px', borderRadius: '50%', overflow: 'hidden', border: '2px solid #4ade80', flexShrink: 0 }}>
                   <img src="/avatars/frog_avatar.jpg" alt="Pip" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
                 <div>
-                  <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#4ade80' }}>Pip's Zone Briefing 🌱</div>
-                  <div style={{ fontSize: '0.84rem', color: '#f0fdf4', lineHeight: 1.45 }}>
+                  <div style={{ fontSize: '0.875rem', fontWeight: 800, color: '#4ade80' }}>Pip's Zone Briefing 🌱</div>
+                  <div style={{ fontSize: '0.875rem', color: '#f0fdf4', lineHeight: 1.5 }}>
                     "Oh no! Someone threw an old battery with vegetable trash, and a laptop has saved personal passwords! Let's crack the recycling code and wipe the laptop clean!"
                   </div>
                 </div>
               </div>
 
-              <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: '1.5rem' }}>
-                Residents are mixing electronic waste with household garbage. 
-                An old laptop was found with personal data accessible. 
-                Solve both puzzles to protect privacy and our environment!
+              <p style={{ color: '#cbd5e1', lineHeight: 1.6, marginBottom: '1.25rem', fontSize: '0.875rem' }}>
+                Residents are mixing toxic battery waste with household trash. Also, an intact laptop with personal credentials was discarded without being wiped. Solve both puzzles below to secure this block!
               </p>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+              {/* 1-Column Puzzle Cards */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                
                 {/* Code Puzzle Card */}
-                <div className="card" style={{
-                  border: codePuzzleSolved ? '1px solid rgba(0,214,143,0.3)' : '1px solid var(--border-card)',
-                  background: codePuzzleSolved ? 'rgba(0,214,143,0.05)' : 'var(--bg-card)',
+                <div style={{
+                  background: codePuzzleSolved ? 'rgba(0, 214, 143, 0.08)' : 'rgba(2, 20, 10, 0.65)',
+                  border: `1.5px solid ${codePuzzleSolved ? '#00d68f' : 'rgba(74, 222, 128, 0.25)'}`,
+                  borderRadius: '16px',
+                  padding: '1.15rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.75rem',
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                    <div style={{ fontSize: '1.5rem' }}>🔣</div>
-                    <div>
-                      <div className="data-label" style={{ marginBottom: '2px' }}>PUZZLE 02</div>
-                      <h3 style={{ fontSize: '0.9375rem', fontWeight: 600 }}>THE RECYCLING CODE</h3>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <span style={{ fontSize: '1.75rem' }}>🔣</span>
+                      <div>
+                        <div className="data-label" style={{ color: '#4ade80', fontSize: '0.75rem' }}>PUZZLE 02</div>
+                        <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: 0, color: '#ffffff' }}>THE RECYCLING CODE</h3>
+                      </div>
                     </div>
-                    {codePuzzleSolved && <span className="badge badge-green" style={{ marginLeft: 'auto' }}>SOLVED</span>}
+                    {codePuzzleSolved ? (
+                      <span className="badge badge-green" style={{ fontSize: '0.8125rem', padding: '4px 10px' }}>SOLVED</span>
+                    ) : (
+                      <span className="badge badge-amber" style={{ fontSize: '0.8125rem', padding: '4px 10px' }}>PENDING</span>
+                    )}
                   </div>
-                  <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginBottom: '1rem', lineHeight: 1.6 }}>
-                    Decode a fictional recycling symbol sequence to determine the correct processing route.
+                  
+                  <p style={{ fontSize: '0.875rem', color: '#94a3b8', margin: 0, lineHeight: 1.5 }}>
+                    Decode a multi-component recycling symbol sequence to identify the required processing route.
                   </p>
+
                   <button
-                    className={codePuzzleSolved ? 'btn btn-secondary btn-sm' : 'btn btn-primary btn-sm'}
+                    className={codePuzzleSolved ? 'btn btn-secondary' : 'btn btn-primary'}
                     onClick={() => setPhase('code-puzzle')}
+                    style={{ width: '100%', minHeight: '48px', fontSize: '0.9375rem', fontWeight: 700 }}
                   >
-                    {codePuzzleSolved ? 'Review' : 'CRACK THE CODE'}
+                    {codePuzzleSolved ? 'REVIEW PUZZLE 02' : 'CRACK THE RECYCLING CODE →'}
                   </button>
                 </div>
 
                 {/* Data Puzzle Card */}
-                <div className="card" style={{
-                  border: dataPuzzleSolved ? '1px solid rgba(0,214,143,0.3)' : '1px solid var(--border-card)',
-                  background: dataPuzzleSolved ? 'rgba(0,214,143,0.05)' : 'var(--bg-card)',
+                <div style={{
+                  background: dataPuzzleSolved ? 'rgba(0, 214, 143, 0.08)' : 'rgba(2, 20, 10, 0.65)',
+                  border: `1.5px solid ${dataPuzzleSolved ? '#00d68f' : 'rgba(74, 222, 128, 0.25)'}`,
+                  borderRadius: '16px',
+                  padding: '1.15rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.75rem',
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                    <div style={{ fontSize: '1.5rem' }}>🛡️</div>
-                    <div>
-                      <div className="data-label" style={{ marginBottom: '2px' }}>PUZZLE 03</div>
-                      <h3 style={{ fontSize: '0.9375rem', fontWeight: 600 }}>DATA SECURITY</h3>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <span style={{ fontSize: '1.75rem' }}>🛡️</span>
+                      <div>
+                        <div className="data-label" style={{ color: '#4ade80', fontSize: '0.75rem' }}>PUZZLE 03</div>
+                        <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: 0, color: '#ffffff' }}>DATA SECURITY</h3>
+                      </div>
                     </div>
-                    {dataPuzzleSolved && <span className="badge badge-green" style={{ marginLeft: 'auto' }}>SOLVED</span>}
+                    {dataPuzzleSolved ? (
+                      <span className="badge badge-green" style={{ fontSize: '0.8125rem', padding: '4px 10px' }}>SOLVED</span>
+                    ) : (
+                      <span className="badge badge-amber" style={{ fontSize: '0.8125rem', padding: '4px 10px' }}>PENDING</span>
+                    )}
                   </div>
-                  <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginBottom: '1rem', lineHeight: 1.6 }}>
-                    A laptop with personal data has been found. Ensure it is properly prepared before recycling.
+
+                  <p style={{ fontSize: '0.875rem', color: '#94a3b8', margin: 0, lineHeight: 1.5 }}>
+                    An unencrypted laptop with active bank passwords was found. Execute proper sanitization before disposal.
                   </p>
+
                   <button
-                    className={dataPuzzleSolved ? 'btn btn-secondary btn-sm' : 'btn btn-primary btn-sm'}
+                    className={dataPuzzleSolved ? 'btn btn-secondary' : 'btn btn-primary'}
                     onClick={() => setPhase('data-puzzle')}
                     id="data-security-btn"
+                    style={{ width: '100%', minHeight: '48px', fontSize: '0.9375rem', fontWeight: 700 }}
                   >
-                    {dataPuzzleSolved ? 'Review' : 'INVESTIGATE'}
+                    {dataPuzzleSolved ? 'REVIEW PUZZLE 03' : 'INVESTIGATE DATA SECURITY →'}
                   </button>
                 </div>
+
               </div>
             </div>
 
+            {/* Advance banner when both completed */}
             {allDone && (
               <div style={{
-                background: 'rgba(0,214,143,0.06)',
-                border: '1px solid rgba(0,214,143,0.3)',
-                borderRadius: 'var(--radius-xl)',
-                padding: '1.5rem',
+                background: 'rgba(0, 214, 143, 0.1)',
+                border: '1.5px solid #00d68f',
+                borderRadius: '20px',
+                padding: '1.25rem',
                 display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
+                flexDirection: 'column',
                 gap: '1rem',
-                flexWrap: 'wrap',
               }}>
                 <div>
-                  <h3 style={{ color: 'var(--accent-green)', marginBottom: '0.25rem' }}>✅ Residential Block Secured</h3>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-                    Both puzzles solved. Repair Lab is now accessible.
+                  <h3 style={{ color: '#00d68f', margin: '0 0 0.35rem 0', fontSize: '1.1rem', fontWeight: 800 }}>
+                    ✅ Residential Block Secured!
+                  </h3>
+                  <p style={{ color: '#cbd5e1', fontSize: '0.875rem', margin: 0, lineHeight: 1.5 }}>
+                    Both puzzles solved. You saved personal identity data and redirected toxic chemicals away from the landfill.
                   </p>
                 </div>
-                <button className="btn btn-primary" onClick={onComplete}>
-                  ADVANCE TO REPAIR LAB <ChevronRight size={14} />
+                <button
+                  className="btn btn-primary"
+                  onClick={onComplete}
+                  style={{ width: '100%', minHeight: '52px', fontSize: '1rem', fontWeight: 800 }}
+                >
+                  ADVANCE TO REPAIR LAB <ChevronRight size={16} />
                 </button>
               </div>
             )}
+
           </div>
         )}
 
+        {/* Phase: Code Puzzle */}
         {phase === 'code-puzzle' && (
           <RecyclingCodePuzzle
             onSolve={() => {
@@ -187,6 +242,7 @@ export default function ResidentialBlock({ gameState, recordDecision, completePu
           />
         )}
 
+        {/* Phase: Data Puzzle */}
         {phase === 'data-puzzle' && (
           <DataSecurityPuzzle
             onSolve={() => {
@@ -198,465 +254,664 @@ export default function ResidentialBlock({ gameState, recordDecision, completePu
             solved={dataPuzzleSolved}
           />
         )}
+
       </div>
     </div>
   );
 }
 
+/* =========================================================================
+   PUZZLE 02: RECYCLING CODE BREAKER
+   Full-width option buttons + Explanation in Mobile Bottom Sheet
+   ========================================================================= */
 function RecyclingCodePuzzle({ onSolve, onBack, solved }) {
   const [selectedRoute, setSelectedRoute] = useState(null);
-  const [revealed, setRevealed] = useState(false);
-  const [answered, setAnswered] = useState(false);
+  const [showExplanationSheet, setShowExplanationSheet] = useState(false);
+  const [lastSubmission, setLastSubmission] = useState(null);
 
-  // The puzzle: Battery + Circuit + Metal → needs specialized processing
   const sequence = ['battery', 'circuit', 'metal'];
 
-  const handleSubmit = () => {
-    if (!selectedRoute) return;
-    setAnswered(true);
+  const handleSelectRoute = (routeId) => {
+    setSelectedRoute(routeId);
+    const isCorrect = routeId === 'battery-center';
+    setLastSubmission({
+      routeId,
+      isCorrect,
+    });
+    setShowExplanationSheet(true);
   };
 
-  const correct = selectedRoute === 'battery-center';
+  const handleCloseSheet = () => {
+    setShowExplanationSheet(false);
+  };
 
   return (
-    <div className="animate-fadeUp">
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
-        <button className="btn btn-ghost btn-sm" onClick={onBack}>
-          <ChevronLeft size={14} /> BACK
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      
+      {/* Sub-header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <button
+          className="btn btn-ghost"
+          onClick={onBack}
+          style={{ minHeight: '44px', minWidth: '44px', padding: '0.4rem 0.75rem', fontSize: '0.875rem' }}
+        >
+          <ChevronLeft size={16} /> BACK
         </button>
         <div>
-          <div className="data-label">ESCAPE ROOM PUZZLE 02</div>
-          <h2 style={{ fontSize: '1.25rem' }}>🔣 THE RECYCLING CODE</h2>
+          <div className="data-label" style={{ color: '#4ade80', fontSize: '0.75rem' }}>ESCAPE ROOM PUZZLE 02</div>
+          <h2 style={{ fontSize: '1.15rem', margin: 0, fontWeight: 800 }}>🔣 THE RECYCLING CODE</h2>
         </div>
       </div>
 
-      <div style={{ maxWidth: '680px' }}>
-        {/* Symbol legend */}
+      {/* Symbol Codex Legend */}
+      <div style={{
+        background: 'rgba(6, 30, 18, 0.75)',
+        border: '1.5px solid rgba(74, 222, 128, 0.25)',
+        borderRadius: '20px',
+        padding: '1.25rem',
+      }}>
+        <div className="data-label" style={{ color: '#94a3b8', fontSize: '0.75rem', marginBottom: '0.75rem' }}>
+          NOVA CITY RECYCLING SYMBOL CODEX
+        </div>
+
+        {/* 2-column wrapping codex chips */}
         <div style={{
-          background: 'var(--bg-card)',
-          border: '1px solid var(--border-card)',
-          borderRadius: 'var(--radius-xl)',
-          padding: '1.5rem',
-          marginBottom: '1.5rem',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))',
+          gap: '0.5rem',
+          marginBottom: '1.25rem',
         }}>
-          <h3 style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', marginBottom: '1rem', letterSpacing: '0.1em' }}>
-            NOVA CITY RECYCLING SYMBOL CODEX
-          </h3>
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
-            {CODE_SYMBOLS.map(sym => (
-              <div key={sym.id} style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.5rem 0.875rem',
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: 'var(--radius-md)',
-              }}>
-                <span style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '1.25rem',
-                  color: sym.color,
-                }}>
-                  {sym.symbol}
-                </span>
-                <span style={{ fontSize: '0.8125rem', fontWeight: 500 }}>{sym.name}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* The code equation */}
-          <div style={{
-            background: 'rgba(0,0,0,0.4)',
-            border: '1px solid rgba(0,214,143,0.2)',
-            borderRadius: 'var(--radius-lg)',
-            padding: '1.5rem',
-            textAlign: 'center',
-            marginBottom: '1.5rem',
-          }}>
-            <div className="data-label" style={{ marginBottom: '1rem' }}>DEVICE WASTE CODE DETECTED</div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-              {sequence.map((symId, i) => {
-                const sym = CODE_SYMBOLS.find(s => s.id === symId);
-                return (
-                  <React.Fragment key={symId}>
-                    <div style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      gap: '0.25rem',
-                    }}>
-                      <span style={{
-                        fontFamily: 'var(--font-display)',
-                        fontSize: '2rem',
-                        color: sym.color,
-                      }}>
-                        {sym.symbol}
-                      </span>
-                      <span style={{
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '0.625rem',
-                        color: 'var(--text-muted)',
-                      }}>
-                        {sym.name}
-                      </span>
-                    </div>
-                    {i < sequence.length - 1 && (
-                      <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', color: 'var(--text-muted)' }}>+</span>
-                    )}
-                  </React.Fragment>
-                );
-              })}
-              <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', color: 'var(--text-muted)' }}>=</span>
-              <span style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', color: 'var(--accent-green)' }}>?</span>
+          {CODE_SYMBOLS.map(sym => (
+            <div key={sym.id} style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.5rem 0.75rem',
+              background: 'rgba(255, 255, 255, 0.04)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: '12px',
+            }}>
+              <span style={{ fontSize: '1.35rem', color: sym.color, lineHeight: 1 }}>{sym.symbol}</span>
+              <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#f0fdf4' }}>{sym.name}</span>
             </div>
-            <p style={{ marginTop: '1rem', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-              A device containing a Battery, Circuit Board, and Metal components must be sent to which processing route?
-            </p>
+          ))}
+        </div>
+
+        {/* The Equation */}
+        <div style={{
+          background: 'rgba(0, 0, 0, 0.5)',
+          border: '1.5px solid rgba(0, 214, 143, 0.3)',
+          borderRadius: '16px',
+          padding: '1.25rem 0.75rem',
+          textAlign: 'center',
+          marginBottom: '1.25rem',
+        }}>
+          <div className="data-label" style={{ color: '#4ade80', fontSize: '0.75rem', marginBottom: '0.75rem' }}>
+            DEVICE WASTE CODE DETECTED
+          </div>
+          
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.5rem',
+            flexWrap: 'wrap',
+          }}>
+            {sequence.map((symId, idx) => {
+              const sym = CODE_SYMBOLS.find(s => s.id === symId);
+              return (
+                <React.Fragment key={symId}>
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    background: 'rgba(255,255,255,0.05)',
+                    padding: '0.4rem 0.6rem',
+                    borderRadius: '10px',
+                    minWidth: '55px',
+                  }}>
+                    <span style={{ fontSize: '1.75rem', color: sym.color, lineHeight: 1 }}>{sym.symbol}</span>
+                    <span style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.2rem' }}>{sym.name}</span>
+                  </div>
+                  {idx < sequence.length - 1 && (
+                    <span style={{ fontSize: '1.5rem', color: '#4ade80', fontWeight: 800 }}>+</span>
+                  )}
+                </React.Fragment>
+              );
+            })}
+            <span style={{ fontSize: '1.5rem', color: '#4ade80', fontWeight: 800 }}>=</span>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'rgba(0, 214, 143, 0.15)',
+              border: '1.5px dashed #00d68f',
+              borderRadius: '10px',
+              width: '50px',
+              height: '50px',
+            }}>
+              <span style={{ fontSize: '1.75rem', color: '#00d68f', fontWeight: 800 }}>?</span>
+            </div>
           </div>
 
-          {/* Route options */}
-          {!answered ? (
-            <div>
-              <h3 style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', marginBottom: '0.75rem', letterSpacing: '0.1em' }}>
-                SELECT PROCESSING ROUTE
-              </h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem', marginBottom: '1rem' }}>
-                {ROUTES.map(route => (
-                  <button
-                    key={route.id}
-                    onClick={() => setSelectedRoute(route.id)}
-                    style={{
+          <p style={{ marginTop: '0.85rem', color: '#cbd5e1', fontSize: '0.875rem', lineHeight: 1.5, margin: '0.85rem 0 0 0' }}>
+            A gadget containing <strong>Battery + Circuit + Metal</strong> must be sent to which facility?
+          </p>
+        </div>
+
+        {/* Route Decision Options: Large full-width buttons */}
+        <div>
+          <div className="data-label" style={{ color: '#4ade80', fontSize: '0.75rem', marginBottom: '0.75rem' }}>
+            TAP PROCESSING ROUTE TO SUBMIT
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            {ROUTES.map(route => {
+              const isSelected = selectedRoute === route.id;
+              return (
+                <button
+                  key={route.id}
+                  onClick={() => handleSelectRoute(route.id)}
+                  style={{
+                    width: '100%',
+                    minHeight: '54px',
+                    padding: '0.85rem 1rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '0.75rem',
+                    background: isSelected ? 'rgba(0, 214, 143, 0.15)' : 'rgba(255, 255, 255, 0.04)',
+                    border: `1.5px solid ${isSelected ? '#00d68f' : 'rgba(255, 255, 255, 0.1)'}`,
+                    borderRadius: '16px',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    color: '#ffffff',
+                    fontSize: '0.9375rem',
+                    fontWeight: 600,
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <div style={{
+                      width: '22px',
+                      height: '22px',
+                      borderRadius: '50%',
+                      border: `2px solid ${isSelected ? '#00d68f' : '#64748b'}`,
+                      background: isSelected ? '#00d68f' : 'transparent',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '0.875rem',
-                      padding: '0.875rem 1.25rem',
-                      background: selectedRoute === route.id ? 'rgba(0,214,143,0.08)' : 'rgba(255,255,255,0.03)',
-                      border: `1px solid ${selectedRoute === route.id ? 'rgba(0,214,143,0.4)' : 'var(--border-subtle)'}`,
-                      borderRadius: 'var(--radius-lg)',
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                      transition: 'all 0.15s',
-                    }}
-                  >
-                    <div style={{
-                      width: '18px',
-                      height: '18px',
-                      borderRadius: '50%',
-                      border: `2px solid ${selectedRoute === route.id ? 'var(--accent-green)' : 'var(--border-card)'}`,
-                      background: selectedRoute === route.id ? 'var(--accent-green)' : 'transparent',
+                      justifyContent: 'center',
                       flexShrink: 0,
-                    }} />
-                    <span style={{ fontSize: '0.9375rem', color: 'var(--text-primary)' }}>{route.label}</span>
-                  </button>
-                ))}
+                    }}>
+                      {isSelected && <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#052e16' }} />}
+                    </div>
+                    <span>{route.label}</span>
+                  </div>
+                  <ChevronRight size={18} color="#64748b" />
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+      </div>
+
+      {/* Bottom Sheet for Scenario Decision Explanation */}
+      {showExplanationSheet && lastSubmission && createPortal(
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 9999,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'flex-end',
+          background: 'rgba(0, 0, 0, 0.75)',
+          backdropFilter: 'blur(6px)',
+        }}>
+          {/* Backdrop click to close */}
+          <div style={{ flex: 1 }} onClick={handleCloseSheet} />
+
+          {/* Sheet container */}
+          <div style={{
+            background: '#071d12',
+            borderTop: `2px solid ${lastSubmission.isCorrect ? '#00d68f' : '#ef4444'}`,
+            borderTopLeftRadius: '24px',
+            borderTopRightRadius: '24px',
+            padding: '1.25rem 1rem calc(var(--safe-bottom, 0px) + 1.25rem)',
+            maxHeight: '85dvh',
+            overflowY: 'auto',
+            animation: 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            boxShadow: '0 -10px 40px rgba(0,0,0,0.8)',
+          }}>
+            {/* Grab handle */}
+            <div style={{ width: '40px', height: '4px', background: '#334155', borderRadius: '2px', margin: '0 auto 1rem' }} />
+
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                <span style={{ fontSize: '1.75rem' }}>{lastSubmission.isCorrect ? '🎉' : '⚠️'}</span>
+                <div>
+                  <h3 style={{
+                    fontSize: '1.15rem',
+                    margin: 0,
+                    fontWeight: 800,
+                    color: lastSubmission.isCorrect ? '#00d68f' : '#ef4444',
+                  }}>
+                    {lastSubmission.isCorrect ? 'Correct Route Verified!' : 'Hazardous Misdirection!'}
+                  </h3>
+                  <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: '#94a3b8' }}>
+                    {lastSubmission.isCorrect ? '+100 EXP ALLOCATED' : 'IMPROPER ROUTE'}
+                  </div>
+                </div>
               </div>
               <button
-                className="btn btn-primary"
-                onClick={handleSubmit}
-                disabled={!selectedRoute}
-                style={{ opacity: selectedRoute ? 1 : 0.5 }}
+                onClick={handleCloseSheet}
+                style={{
+                  background: 'rgba(255,255,255,0.06)',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '36px',
+                  height: '36px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#ffffff',
+                  cursor: 'pointer',
+                }}
               >
-                SUBMIT ANSWER
+                <X size={18} />
               </button>
             </div>
-          ) : (
-            <div style={{ animation: 'fadeUp 0.3s ease' }}>
-              <div style={{
-                padding: '1.25rem',
-                background: correct ? 'rgba(0,214,143,0.08)' : 'rgba(239,68,68,0.08)',
-                border: `1px solid ${correct ? 'rgba(0,214,143,0.3)' : 'rgba(239,68,68,0.3)'}`,
-                borderRadius: 'var(--radius-lg)',
-                marginBottom: '1rem',
-              }}>
-                <h3 style={{ color: correct ? 'var(--accent-green)' : 'var(--accent-red)', marginBottom: '0.5rem' }}>
-                  {correct ? '✅ Correct!' : '❌ Incorrect'}
-                </h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.7 }}>
-                  {correct
-                    ? 'Battery + Circuit Board + Metal = Specialized Battery Collection Center. Devices with lithium batteries contain hazardous materials and require specialized processing — NOT general recycling.'
-                    : 'The correct answer is Battery Collection Center. Devices containing lithium batteries and circuit boards must go to specialized e-waste processors — general recycling bins and incinerators cannot handle these safely.'}
-                </p>
-              </div>
-              {correct ? (
-                <button className="btn btn-primary" onClick={onSolve}>
-                  UNLOCK CLUE (+100 pts) <ChevronRight size={14} />
-                </button>
-              ) : (
-                <button className="btn btn-secondary" onClick={() => { setAnswered(false); setSelectedRoute(null); }}>
-                  TRY AGAIN
-                </button>
-              )}
+
+            {/* Explanation Content */}
+            <div style={{
+              background: lastSubmission.isCorrect ? 'rgba(0, 214, 143, 0.08)' : 'rgba(239, 68, 68, 0.08)',
+              border: `1.5px solid ${lastSubmission.isCorrect ? 'rgba(0, 214, 143, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
+              borderRadius: '16px',
+              padding: '1rem',
+              marginBottom: '1.25rem',
+            }}>
+              <p style={{ color: '#f0fdf4', fontSize: '0.9375rem', lineHeight: 1.6, margin: 0 }}>
+                {lastSubmission.isCorrect
+                  ? '⚡ Battery + ⊕ Circuit Board + ◈ Metal = Specialized Battery Collection Center. Electronic gadgets with lithium batteries cannot be processed by generic recycling or municipal compactors due to thermal runaway risk.'
+                  : '❌ Incorrect Route: General bins and incinerators cannot handle lithium cells and circuit solder. Burning releases neurotoxic vapors, and landfill disposal leaches cobalt and lithium into the water table.'}
+              </p>
             </div>
-          )}
-        </div>
-      </div>
+
+            {/* Action button */}
+            {lastSubmission.isCorrect ? (
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  handleCloseSheet();
+                  onSolve();
+                }}
+                id="claim-code-clue-btn"
+                style={{ width: '100%', minHeight: '52px', fontSize: '1rem', fontWeight: 800 }}
+              >
+                UNLOCK PUZZLE CLUE (+100 PTS) →
+              </button>
+            ) : (
+              <button
+                className="btn btn-secondary"
+                onClick={handleCloseSheet}
+                style={{ width: '100%', minHeight: '52px', fontSize: '1rem', fontWeight: 700 }}
+              >
+                TRY ANOTHER ROUTE
+              </button>
+            )}
+
+          </div>
+        </div>,
+        document.body
+      )}
+
     </div>
   );
 }
 
+/* =========================================================================
+   PUZZLE 03: DATA SECURITY
+   Full-width option buttons + Explanation Bottom Sheet + Sanitization
+   ========================================================================= */
 function DataSecurityPuzzle({ onSolve, onBack, solved }) {
   const [selectedAction, setSelectedAction] = useState(null);
-  const [answered, setAnswered] = useState(false);
+  const [showExplanationSheet, setShowExplanationSheet] = useState(false);
+  const [lastSubmission, setLastSubmission] = useState(null);
   const [wiping, setWiping] = useState(false);
   const [wipeStep, setWipeStep] = useState(0);
   const [wipeComplete, setWipeComplete] = useState(false);
 
   const actions = [
-    { id: 'throw', label: 'A. Throw it away', correct: false },
-    { id: 'stranger', label: 'B. Give directly to a stranger', correct: false },
-    { id: 'wipe', label: 'C. Securely erase all data', correct: true },
-    { id: 'screen', label: 'D. Break the screen only', correct: false },
+    { id: 'throw', label: 'A. Throw it away in the trash', correct: false },
+    { id: 'stranger', label: 'B. Give it directly to a stranger', correct: false },
+    { id: 'wipe', label: 'C. Cryptographically erase all data', correct: true },
+    { id: 'screen', label: 'D. Break the glass screen only', correct: false },
   ];
 
-  const handleSubmit = () => {
-    setAnswered(true);
+  const handleSelectAction = (actionId) => {
+    setSelectedAction(actionId);
+    const isCorrect = actionId === 'wipe';
+    setLastSubmission({
+      actionId,
+      isCorrect,
+    });
+    setShowExplanationSheet(true);
+  };
+
+  const handleCloseSheet = () => {
+    setShowExplanationSheet(false);
   };
 
   const handleStartWipe = () => {
+    setShowExplanationSheet(false);
     setWiping(true);
     WIPE_STEPS.forEach((step, i) => {
       const totalDelay = WIPE_STEPS.slice(0, i).reduce((acc, s) => acc + s.duration, 0);
       setTimeout(() => {
         setWipeStep(i);
         if (step.final) {
-          setTimeout(() => setWipeComplete(true), 800);
+          setTimeout(() => setWipeComplete(true), 600);
         }
-      }, totalDelay + 200);
+      }, totalDelay + 100);
     });
   };
 
-  const correct = selectedAction === 'wipe';
-
   return (
-    <div className="animate-fadeUp">
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
-        <button className="btn btn-ghost btn-sm" onClick={onBack}>
-          <ChevronLeft size={14} /> BACK
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      
+      {/* Sub-header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <button
+          className="btn btn-ghost"
+          onClick={onBack}
+          style={{ minHeight: '44px', minWidth: '44px', padding: '0.4rem 0.75rem', fontSize: '0.875rem' }}
+        >
+          <ChevronLeft size={16} /> BACK
         </button>
         <div>
-          <div className="data-label">ESCAPE ROOM PUZZLE 03</div>
-          <h2 style={{ fontSize: '1.25rem' }}>🛡️ DATA SECURITY</h2>
+          <div className="data-label" style={{ color: '#4ade80', fontSize: '0.75rem' }}>ESCAPE ROOM PUZZLE 03</div>
+          <h2 style={{ fontSize: '1.15rem', margin: 0, fontWeight: 800 }}>🛡️ DATA SECURITY</h2>
         </div>
       </div>
 
-      <div style={{ maxWidth: '600px' }}>
-        {/* Alert */}
+      {/* Main card */}
+      <div style={{
+        background: 'rgba(6, 30, 18, 0.75)',
+        border: '1.5px solid rgba(74, 222, 128, 0.25)',
+        borderRadius: '20px',
+        padding: '1.25rem',
+      }}>
+        
+        {/* Threat Warning Banner */}
         <div style={{
-          background: 'rgba(239,68,68,0.08)',
-          border: '1px solid rgba(239,68,68,0.3)',
-          borderRadius: 'var(--radius-xl)',
-          padding: '1.5rem',
-          marginBottom: '1.5rem',
+          background: 'rgba(239, 68, 68, 0.12)',
+          border: '1.5px solid rgba(239, 68, 68, 0.35)',
+          borderRadius: '16px',
+          padding: '1rem',
+          marginBottom: '1.25rem',
           display: 'flex',
-          gap: '1rem',
+          gap: '0.85rem',
           alignItems: 'flex-start',
         }}>
-          <AlertTriangle size={24} color="var(--accent-red)" style={{ flexShrink: 0, marginTop: '2px' }} />
+          <AlertTriangle size={24} color="#ef4444" style={{ flexShrink: 0, marginTop: '2px' }} />
           <div>
-            <h3 style={{ color: 'var(--accent-red)', marginBottom: '0.5rem', fontSize: '0.9375rem' }}>
-              ⚠️ DEVICE CONTAINS PERSONAL DATA
+            <h3 style={{ color: '#ef4444', margin: '0 0 0.35rem 0', fontSize: '0.9375rem', fontWeight: 800 }}>
+              CRITICAL PRIVACY BREACH DETECTED
             </h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.7 }}>
-              An old laptop was found. Scanning reveals: 3,240 personal photos, banking app data, stored passwords, company documents. 
-              The device is destined for recycling — but there's a critical step required first.
+            <p style={{ color: '#cbd5e1', fontSize: '0.875rem', margin: 0, lineHeight: 1.5 }}>
+              Laptop scan discovered 3,240 family photos, browser history, autofill bank accounts, and work credentials. Discarding without sanitization compromises privacy!
             </p>
           </div>
         </div>
 
-        {/* Device visual */}
+        {/* Device Status Box */}
         <div style={{
-          background: 'var(--bg-card)',
-          border: '1px solid var(--border-card)',
-          borderRadius: 'var(--radius-xl)',
-          padding: '1.5rem',
-          marginBottom: '1.5rem',
+          background: 'rgba(0, 0, 0, 0.4)',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          borderRadius: '16px',
+          padding: '1rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1rem',
+          marginBottom: '1.25rem',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
-            <div style={{ fontSize: '2.5rem' }}>💻</div>
-            <div>
-              <h3 style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Recovered Laptop</h3>
-              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                <span className="badge badge-red">DATA DETECTED</span>
-                <span className="badge badge-amber">FOR RECYCLING</span>
-              </div>
+          <div style={{ fontSize: '2.5rem' }}>💻</div>
+          <div>
+            <h4 style={{ margin: '0 0 0.35rem 0', fontSize: '1rem', color: '#ffffff' }}>Unsanitized Work Laptop</h4>
+            <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+              <span className="badge badge-red" style={{ fontSize: '0.75rem', padding: '3px 8px' }}>DATA EXPOSED</span>
+              <span className="badge badge-amber" style={{ fontSize: '0.75rem', padding: '3px 8px' }}>PENDING RECYCLE</span>
             </div>
           </div>
+        </div>
 
-          {!answered && !wipeComplete && (
-            <div>
-              <p style={{ color: 'var(--text-secondary)', fontWeight: 500, marginBottom: '0.875rem', fontSize: '0.9375rem' }}>
-                What should happen BEFORE this laptop is recycled?
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem', marginBottom: '1rem' }}>
-                {actions.map(action => (
+        {!wiping && !wipeComplete && (
+          <div>
+            <p style={{ color: '#f0fdf4', fontSize: '0.9375rem', fontWeight: 600, marginBottom: '0.85rem' }}>
+              What MUST be performed BEFORE this device is recycled?
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {actions.map(action => {
+                const isSelected = selectedAction === action.id;
+                return (
                   <button
                     key={action.id}
-                    onClick={() => setSelectedAction(action.id)}
+                    onClick={() => handleSelectAction(action.id)}
                     style={{
+                      width: '100%',
+                      minHeight: '54px',
+                      padding: '0.85rem 1rem',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '0.875rem',
-                      padding: '0.875rem 1.25rem',
-                      background: selectedAction === action.id ? 'rgba(0,214,143,0.08)' : 'rgba(255,255,255,0.03)',
-                      border: `1px solid ${selectedAction === action.id ? 'rgba(0,214,143,0.4)' : 'var(--border-subtle)'}`,
-                      borderRadius: 'var(--radius-lg)',
+                      justifyContent: 'space-between',
+                      gap: '0.75rem',
+                      background: isSelected ? 'rgba(0, 214, 143, 0.15)' : 'rgba(255, 255, 255, 0.04)',
+                      border: `1.5px solid ${isSelected ? '#00d68f' : 'rgba(255, 255, 255, 0.1)'}`,
+                      borderRadius: '16px',
                       cursor: 'pointer',
                       textAlign: 'left',
-                      transition: 'all 0.15s',
+                      color: '#ffffff',
+                      fontSize: '0.9375rem',
+                      fontWeight: 600,
+                      transition: 'all 0.15s ease',
                     }}
                   >
-                    <div style={{
-                      width: '18px',
-                      height: '18px',
-                      borderRadius: '50%',
-                      border: `2px solid ${selectedAction === action.id ? 'var(--accent-green)' : 'var(--border-card)'}`,
-                      background: selectedAction === action.id ? 'var(--accent-green)' : 'transparent',
-                      flexShrink: 0,
-                    }} />
-                    <span style={{ fontSize: '0.9375rem', color: 'var(--text-primary)' }}>{action.label}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <div style={{
+                        width: '22px',
+                        height: '22px',
+                        borderRadius: '50%',
+                        border: `2px solid ${isSelected ? '#00d68f' : '#64748b'}`,
+                        background: isSelected ? '#00d68f' : 'transparent',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                      }}>
+                        {isSelected && <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#052e16' }} />}
+                      </div>
+                      <span>{action.label}</span>
+                    </div>
+                    <ChevronRight size={18} color="#64748b" />
                   </button>
-                ))}
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Wiping progress in terminal style */}
+        {wiping && !wipeComplete && (
+          <div style={{
+            background: 'rgba(0, 0, 0, 0.65)',
+            border: '1.5px solid #00d68f',
+            borderRadius: '16px',
+            padding: '1.25rem',
+            fontFamily: 'var(--font-mono)',
+          }}>
+            <div className="data-label" style={{ color: '#00d68f', fontSize: '0.75rem', marginBottom: '0.75rem' }}>
+              SANITIZATION CONSOLE — DOD 5220.22-M
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
+              {WIPE_STEPS.slice(0, wipeStep + 1).map((step, i) => (
+                <div key={i} style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  fontSize: '0.875rem',
+                  color: i === wipeStep ? '#00d68f' : '#94a3b8',
+                }}>
+                  <span>{i < wipeStep ? '✓' : '▶'}</span>
+                  <span>{step.label}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="progress-track" style={{ height: '8px', background: 'rgba(255,255,255,0.1)' }}>
+              <div
+                className="progress-fill progress-green"
+                style={{
+                  width: `${((wipeStep + 1) / WIPE_STEPS.length) * 100}%`,
+                  transition: 'width 0.8s ease',
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Wipe Complete Screen */}
+        {wipeComplete && (
+          <div style={{
+            background: 'rgba(0, 214, 143, 0.1)',
+            border: '1.5px solid #00d68f',
+            borderRadius: '16px',
+            padding: '1.5rem',
+            textAlign: 'center',
+          }}>
+            <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🔐</div>
+            <h3 style={{ color: '#00d68f', margin: '0 0 0.5rem 0', fontSize: '1.15rem', fontWeight: 800 }}>
+              CRYPTOGRAPHIC WIPE COMPLETE
+            </h3>
+            <p style={{ color: '#cbd5e1', fontSize: '0.875rem', margin: '0 0 1.25rem 0', lineHeight: 1.5 }}>
+              All solid-state storage blocks cleared. Safe for component dismantling and circuit board recycling.
+            </p>
+            <button
+              className="btn btn-primary"
+              onClick={onSolve}
+              id="complete-data-wipe-btn"
+              style={{ width: '100%', minHeight: '52px', fontSize: '1rem', fontWeight: 800 }}
+            >
+              COMPLETE DATA SECURITY CHALLENGE (+120 PTS) →
+            </button>
+          </div>
+        )}
+
+      </div>
+
+      {/* Bottom Sheet for Scenario Decision Explanation */}
+      {showExplanationSheet && lastSubmission && createPortal(
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 9999,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'flex-end',
+          background: 'rgba(0, 0, 0, 0.75)',
+          backdropFilter: 'blur(6px)',
+        }}>
+          <div style={{ flex: 1 }} onClick={handleCloseSheet} />
+
+          <div style={{
+            background: '#071d12',
+            borderTop: `2px solid ${lastSubmission.isCorrect ? '#00d68f' : '#ef4444'}`,
+            borderTopLeftRadius: '24px',
+            borderTopRightRadius: '24px',
+            padding: '1.25rem 1rem calc(var(--safe-bottom, 0px) + 1.25rem)',
+            maxHeight: '85dvh',
+            overflowY: 'auto',
+            animation: 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            boxShadow: '0 -10px 40px rgba(0,0,0,0.8)',
+          }}>
+            <div style={{ width: '40px', height: '4px', background: '#334155', borderRadius: '2px', margin: '0 auto 1rem' }} />
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                <span style={{ fontSize: '1.75rem' }}>{lastSubmission.isCorrect ? '✅' : '❌'}</span>
+                <div>
+                  <h3 style={{
+                    fontSize: '1.15rem',
+                    margin: 0,
+                    fontWeight: 800,
+                    color: lastSubmission.isCorrect ? '#00d68f' : '#ef4444',
+                  }}>
+                    {lastSubmission.isCorrect ? 'Security Protocol Verified!' : 'Data Vulnerability!'}
+                  </h3>
+                  <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: '#94a3b8' }}>
+                    {lastSubmission.isCorrect ? 'PROCEDURE AUTHORIZED' : 'INCORRECT ACTION'}
+                  </div>
+                </div>
               </div>
               <button
-                className="btn btn-primary"
-                onClick={handleSubmit}
-                disabled={!selectedAction}
-                style={{ opacity: selectedAction ? 1 : 0.5 }}
+                onClick={handleCloseSheet}
+                style={{
+                  background: 'rgba(255,255,255,0.06)',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '36px',
+                  height: '36px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#ffffff',
+                  cursor: 'pointer',
+                }}
               >
-                CONFIRM
+                <X size={18} />
               </button>
             </div>
-          )}
 
-          {answered && !wiping && !wipeComplete && (
-            <div style={{ animation: 'fadeUp 0.3s ease' }}>
-              {correct ? (
-                <div>
-                  <div style={{
-                    padding: '1rem',
-                    background: 'rgba(0,214,143,0.08)',
-                    border: '1px solid rgba(0,214,143,0.2)',
-                    borderRadius: 'var(--radius-lg)',
-                    marginBottom: '1rem',
-                  }}>
-                    <p style={{ color: 'var(--accent-green)', fontWeight: 600, marginBottom: '0.25rem' }}>✅ Correct!</p>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.6 }}>
-                      Securely erasing data is always required before recycling, donating, or selling any device. 
-                      A basic factory reset alone is not sufficient — encrypted data wipe is needed.
-                    </p>
-                  </div>
-                  <div style={{
-                    padding: '1rem',
-                    background: 'rgba(0,180,216,0.06)',
-                    border: '1px solid rgba(0,180,216,0.2)',
-                    borderRadius: 'var(--radius-lg)',
-                    marginBottom: '1rem',
-                  }}>
-                    <p style={{ color: 'var(--accent-blue)', fontWeight: 500, marginBottom: '0.25rem' }}>
-                      🔐 Initiate Secure Data Wipe?
-                    </p>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.8125rem' }}>
-                      Complete the data wipe process to fully secure this device.
-                    </p>
-                  </div>
-                  <button className="btn btn-primary" onClick={handleStartWipe} id="start-secure-wipe-btn">
-                    <Shield size={14} />
-                    START SECURE WIPE
-                  </button>
-                </div>
-              ) : (
-                <div>
-                  <div style={{
-                    padding: '1rem',
-                    background: 'rgba(239,68,68,0.08)',
-                    border: '1px solid rgba(239,68,68,0.2)',
-                    borderRadius: 'var(--radius-lg)',
-                    marginBottom: '1rem',
-                  }}>
-                    <p style={{ color: 'var(--accent-red)', fontWeight: 600, marginBottom: '0.25rem' }}>❌ Incorrect</p>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.6 }}>
-                      The correct answer is C — Securely erase all data. 
-                      Personal data must be properly wiped before any disposal. Breaking a screen or throwing away doesn't protect your data.
-                    </p>
-                  </div>
-                  <button className="btn btn-secondary" onClick={() => { setAnswered(false); setSelectedAction(null); }}>
-                    TRY AGAIN
-                  </button>
-                </div>
-              )}
+            <div style={{
+              background: lastSubmission.isCorrect ? 'rgba(0, 214, 143, 0.08)' : 'rgba(239, 68, 68, 0.08)',
+              border: `1.5px solid ${lastSubmission.isCorrect ? 'rgba(0, 214, 143, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
+              borderRadius: '16px',
+              padding: '1rem',
+              marginBottom: '1.25rem',
+            }}>
+              <p style={{ color: '#f0fdf4', fontSize: '0.9375rem', lineHeight: 1.6, margin: 0 }}>
+                {lastSubmission.isCorrect
+                  ? 'Securely sanitizing flash blocks with multi-pass zeroing or hardware cryptographic erasure is required before secondary transfer or recycling. Merely smashing glass leaves memory chips intact for scrap scavengers.'
+                  : 'Breaking glass or giving the device away leaves SSD flash storage completely intact! Bad actors frequently extract intact NAND flash chips from discarded electronics to recover bank logins.'}
+              </p>
             </div>
-          )}
 
-          {/* Wipe animation */}
-          {wiping && !wipeComplete && (
-            <div style={{ animation: 'fadeUp 0.3s ease' }}>
-              <div style={{
-                background: 'rgba(0,0,0,0.5)',
-                border: '1px solid rgba(0,214,143,0.2)',
-                borderRadius: 'var(--radius-lg)',
-                padding: '1.5rem',
-                fontFamily: 'var(--font-mono)',
-              }}>
-                {WIPE_STEPS.slice(0, wipeStep + 1).map((step, i) => (
-                  <div key={i} style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    marginBottom: '0.5rem',
-                    animation: 'fadeIn 0.3s ease',
-                    color: i === wipeStep ? 'var(--accent-green)' : 'var(--text-secondary)',
-                    fontSize: '0.8125rem',
-                  }}>
-                    {i < wipeStep ? '✓' : i === wipeStep && !step.final ? '▶' : step.final ? '✅' : '•'}
-                    <span>{step.label}</span>
-                    {i === wipeStep && !step.final && <span className="typewriter-cursor" />}
-                  </div>
-                ))}
-                {wipeStep < WIPE_STEPS.length - 1 && (
-                  <div style={{ marginTop: '1rem' }}>
-                    <div className="progress-track">
-                      <div
-                        className="progress-fill progress-green"
-                        style={{
-                          width: `${(wipeStep / (WIPE_STEPS.length - 1)) * 100}%`,
-                          transition: 'width 1s ease',
-                        }}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {wipeComplete && (
-            <div style={{ animation: 'scaleIn 0.4s ease' }}>
-              <div style={{
-                background: 'rgba(0,214,143,0.08)',
-                border: '1px solid rgba(0,214,143,0.3)',
-                borderRadius: 'var(--radius-lg)',
-                padding: '1.5rem',
-                textAlign: 'center',
-                marginBottom: '1rem',
-              }}>
-                <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>🔐</div>
-                <h3 style={{ color: 'var(--accent-green)', marginBottom: '0.5rem' }}>DATA WIPE COMPLETE</h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-                  All personal data has been securely erased. Device is now safe for recycling.
-                </p>
-                <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-                  <span className="badge badge-green">DATA CLEARED</span>
-                  <span className="badge badge-blue">SAFE FOR RECYCLING</span>
-                </div>
-              </div>
-              <button className="btn btn-primary w-full" onClick={onSolve}>
-                COMPLETE DATA SECURITY CHALLENGE (+120 pts) <ChevronRight size={14} />
+            {lastSubmission.isCorrect ? (
+              <button
+                className="btn btn-primary"
+                onClick={handleStartWipe}
+                id="start-secure-wipe-btn"
+                style={{ width: '100%', minHeight: '52px', fontSize: '1rem', fontWeight: 800 }}
+              >
+                <Shield size={18} /> START SECURE DATA WIPE NOW →
               </button>
-            </div>
-          )}
-        </div>
-      </div>
+            ) : (
+              <button
+                className="btn btn-secondary"
+                onClick={handleCloseSheet}
+                style={{ width: '100%', minHeight: '52px', fontSize: '1rem', fontWeight: 700 }}
+              >
+                TRY AGAIN
+              </button>
+            )}
+
+          </div>
+        </div>,
+        document.body
+      )}
+
     </div>
   );
 }

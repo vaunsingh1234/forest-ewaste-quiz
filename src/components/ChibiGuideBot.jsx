@@ -435,6 +435,7 @@ export default function ChibiGuideBot({
           {/* Mini speech teaser pill when collapsed */}
           {!isExpanded && (
             <div
+              className="chibi-teaser-pill"
               onClick={() => {
                 playGuideChime('pop');
                 setIsExpanded(true);
@@ -464,6 +465,7 @@ export default function ChibiGuideBot({
           )}
 
           <button
+            className="chibi-floating-btn"
             onClick={() => {
               playGuideChime('pop');
               setIsExpanded(!isExpanded);
@@ -471,8 +473,8 @@ export default function ChibiGuideBot({
             title="Talk to Pip the Chibi Guide"
             style={{
               position: 'relative',
-              width: '60px',
-              height: '60px',
+              width: '56px',
+              height: '56px',
               borderRadius: '50%',
               padding: 0,
               border: '3px solid #4ade80',

@@ -865,11 +865,21 @@ input, select, textarea {
 
 .chibi-guide-container {
   position: fixed;
-  bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + 0.75rem);
-  right: 0.75rem;
+  bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + 0.5rem);
+  right: 0.5rem;
   z-index: 1050;
   font-family: var(--font-main);
   pointer-events: none;
+}
+
+@media (max-width: 600px) {
+  .chibi-teaser-pill {
+    display: none !important;
+  }
+  .chibi-floating-btn {
+    width: 44px !important;
+    height: 44px !important;
+  }
 }
 
 @media (min-width: 769px) {
