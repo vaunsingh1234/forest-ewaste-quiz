@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Volume2, VolumeX, Sparkles, HelpCircle, Lightbulb, RefreshCw, X, ChevronUp, ChevronDown, Check, BookOpen, Shield } from 'lucide-react';
 import { GRADE_LEVELS, GUIDE_CHARACTERS, FUN_ECO_FACTS } from '../data/gradeData';
 import { playGuideChime, speakGuideText, stopGuideSpeech } from '../utils/audio';
@@ -171,28 +172,43 @@ export default function ChibiGuideBot({
   };
 
   return (
-    <aside
-      className="chibi-guide-container"
-      aria-label="Pip the Eco-Guide Assistant"
-    >
-      <div style={{ pointerEvents: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.6rem' }}>
-        
-        {/* EXPANDED GUIDE CARD */}
-        {isExpanded ? (
+    <>
+      {/* EXPANDED GUIDE CARD MODAL / BOTTOM SHEET */}
+      {isExpanded && createPortal(
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 9999,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'flex-end',
+          background: 'rgba(0, 0, 0, 0.75)',
+          backdropFilter: 'blur(6px)',
+        }}>
+          {/* Backdrop tap to close */}
+          <div style={{ flex: 1 }} onClick={() => setIsExpanded(false)} />
+
           <div
-            className="chibi-dialog-bubble animate-scaleIn"
+            className="chibi-dialog-bubble"
             style={{
-              width: 'min(380px, calc(100vw - 2.5rem))',
-              background: 'linear-gradient(145deg, rgba(14, 38, 28, 0.96) 0%, rgba(8, 23, 17, 0.98) 100%)',
-              border: '2px solid rgba(74, 222, 128, 0.35)',
-              borderRadius: '24px',
-              padding: '1.15rem',
-              boxShadow: '0 12px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(34, 197, 94, 0.25)',
-              backdropFilter: 'blur(16px)',
+              width: '100%',
+              maxWidth: '560px',
+              margin: '0 auto',
+              background: 'linear-gradient(145deg, #071f14 0%, #03120b 100%)',
+              borderTop: '2.5px solid #4ade80',
+              borderTopLeftRadius: '24px',
+              borderTopRightRadius: '24px',
+              padding: '1.25rem 1.25rem calc(var(--safe-bottom, 0px) + 1.25rem)',
+              maxHeight: '82dvh',
+              overflowY: 'auto',
+              boxShadow: '0 -10px 40px rgba(0, 0, 0, 0.8)',
               position: 'relative',
-              overflow: 'hidden',
+              animation: 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
             }}
           >
+            {/* Grab handle */}
+            <div style={{ width: '40px', height: '4px', background: '#334155', borderRadius: '2px', margin: '0 auto 1rem' }} />
+
             {/* Top decorative vine glow */}
             <div
               style={{
@@ -428,10 +444,16 @@ export default function ChibiGuideBot({
               </div>
             )}
           </div>
-        ) : null}
+        </div>,
+        document.body
+      )}
 
-        {/* FLOATING CHIBI AVATAR BUTTON / LAUNCHER */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+      {/* FLOATING CHIBI AVATAR BUTTON / LAUNCHER */}
+      <aside
+        className="chibi-guide-container"
+        aria-label="Pip the Eco-Guide Assistant"
+      >
+        <div style={{ pointerEvents: 'auto', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
           {/* Mini speech teaser pill when collapsed */}
           {!isExpanded && (
             <div
@@ -538,7 +560,7 @@ export default function ChibiGuideBot({
             />
           </button>
         </div>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 }

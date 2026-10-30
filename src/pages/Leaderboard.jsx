@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Trophy, ChevronLeft, Crown, Award, Sparkles, RefreshCw, Trash2, ArrowLeft } from 'lucide-react';
+import { Trophy, ChevronLeft, Crown, Award, Sparkles, RefreshCw, Trash2, ArrowLeft, ArrowRight } from 'lucide-react';
 import { DEFAULT_AVATAR } from '../data/avatars';
 
 const DEFAULT_CHAMPIONS = [
@@ -73,8 +73,7 @@ const DEFAULT_CHAMPIONS = [
 ];
 
 export default function Leaderboard({ gameState, getRank, navigate }) {
-  const currentAvatar = gameState.avatar || DEFAULT_AVATAR;
-  const [filterTab, setFilterTab] = useState('global'); // 'global' | 'local'
+  const currentAvatar = gameState?.avatar || DEFAULT_AVATAR;
 
   const [savedRecords, setSavedRecords] = useState(() => {
     try {
@@ -89,20 +88,18 @@ export default function Leaderboard({ gameState, getRank, navigate }) {
     setSavedRecords([]);
   };
 
-  // Build combined list
-  const playerEntry = gameState.gameStarted ? {
+  const playerEntry = gameState?.gameStarted ? {
     isPlayer: true,
-    name: gameState.playerName || 'Officer Nova',
-    level: `${gameState.score * 10} lvl`,
-    score: gameState.score,
-    avatarImg: currentAvatar.avatarImg || '/avatars/frog_avatar.jpg',
-    headgear: currentAvatar.headgearName || 'Emerald Frog Hat',
+    name: gameState?.playerName || 'Officer Nova',
+    level: `${(gameState?.score || 0) * 10} lvl`,
+    score: gameState?.score || 0,
+    avatarImg: currentAvatar?.avatarImg || '/avatars/frog_avatar.jpg',
+    headgear: currentAvatar?.headgearName || 'Emerald Frog Hat',
   } : null;
 
-  // Insert player into the ranks
   let fullList = [...DEFAULT_CHAMPIONS];
   if (savedRecords.length > 0) {
-    const formattedSaved = savedRecords.map((r, i) => ({
+    const formattedSaved = savedRecords.map((r) => ({
       name: r.name,
       level: `${(r.score || 0) * 10} lvl`,
       score: r.score || 0,
@@ -116,10 +113,8 @@ export default function Leaderboard({ gameState, getRank, navigate }) {
     fullList.push(playerEntry);
   }
 
-  // Sort descending by score
   fullList.sort((a, b) => b.score - a.score);
 
-  // Assign ranks
   const rankedEntries = fullList.map((entry, index) => ({
     ...entry,
     rank: index + 1,
@@ -128,51 +123,54 @@ export default function Leaderboard({ gameState, getRank, navigate }) {
   const top1 = rankedEntries[0];
   const top2 = rankedEntries[1];
   const top3 = rankedEntries[2];
-  const restEntries = rankedEntries.slice(3, 10);
+  const restEntries = rankedEntries.slice(3, 12);
 
   return (
     <div className="page-enter leaderboard-page" style={{
-      minHeight: 'calc(100dvh - 4rem)',
-      padding: '1.5rem 1rem 4rem',
-      background: 'radial-gradient(ellipse at top, #132247 0%, #080d1a 80%)',
+      minHeight: '100dvh',
+      padding: 'calc(var(--safe-top, 0px) + 0.75rem) 0.75rem calc(var(--bottom-nav-total-height, 70px) + 1.5rem)',
+      background: 'radial-gradient(ellipse at top, #112338 0%, #060e18 85%)',
+      color: '#f0fdf4',
+      overflowX: 'hidden',
     }}>
-      <div className="container" style={{ maxWidth: '780px', margin: '0 auto' }}>
+      <div className="container" style={{ maxWidth: '640px', margin: '0 auto', padding: '0 0.25rem' }}>
         
-        {/* Mobile App Style Header */}
+        {/* Header */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          marginBottom: '1.5rem',
+          marginBottom: '1.25rem',
         }}>
           <button
-            onClick={() => navigate('map')}
+            onClick={() => navigate(gameState?.gameStarted ? 'map' : 'home')}
             style={{
+              minHeight: '44px',
+              minWidth: '44px',
               background: 'rgba(255, 255, 255, 0.08)',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              borderRadius: '50%',
-              width: '42px',
-              height: '42px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              borderRadius: '12px',
+              padding: '0.4rem 0.75rem',
               color: '#ffffff',
               cursor: 'pointer',
-              transition: 'background 0.2s',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              fontSize: '0.8125rem',
+              fontFamily: 'var(--font-mono)',
+              fontWeight: 700,
             }}
-            title="Back to Map"
           >
-            <ChevronLeft size={22} />
+            <ChevronLeft size={16} /> MAP
           </button>
 
           <div style={{ textAlign: 'center' }}>
             <h1 style={{
               fontFamily: 'var(--font-display)',
-              fontSize: '1.6rem',
+              fontSize: '1.35rem',
               fontWeight: 800,
               color: '#ffffff',
               margin: 0,
-              letterSpacing: '0.04em',
             }}>
               Leaderboard
             </h1>
@@ -180,23 +178,24 @@ export default function Leaderboard({ gameState, getRank, navigate }) {
               fontSize: '0.75rem',
               color: '#94a3b8',
               fontFamily: 'var(--font-mono)',
-              letterSpacing: '0.08em',
+              letterSpacing: '0.06em',
             }}>
-              NOVA CITY RECOVERY HALL OF FAME
+              NOVA SANCTUARY HALL OF FAME
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <div>
             {savedRecords.length > 0 && (
               <button
                 onClick={clearRecords}
                 title="Clear local scores"
                 style={{
+                  minHeight: '44px',
+                  minWidth: '44px',
                   background: 'rgba(239, 68, 68, 0.12)',
                   border: '1px solid rgba(239, 68, 68, 0.3)',
-                  borderRadius: '50%',
-                  width: '42px',
-                  height: '42px',
+                  borderRadius: '12px',
+                  padding: '0.4rem',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -207,425 +206,303 @@ export default function Leaderboard({ gameState, getRank, navigate }) {
                 <Trash2 size={16} />
               </button>
             )}
-            <div style={{ width: savedRecords.length > 0 ? '0' : '42px' }} />
+            {savedRecords.length === 0 && <div style={{ width: '44px' }} />}
           </div>
         </div>
 
         {/* Current Player Status Bar */}
-        {gameState.gameStarted && (
+        {gameState?.gameStarted && (
           <div style={{
-            background: 'linear-gradient(135deg, rgba(0, 214, 143, 0.12) 0%, rgba(56, 189, 248, 0.08) 100%)',
-            border: '1px solid rgba(0, 214, 143, 0.35)',
+            background: 'linear-gradient(135deg, rgba(0, 214, 143, 0.15) 0%, rgba(56, 189, 248, 0.08) 100%)',
+            border: '1.5px solid rgba(0, 214, 143, 0.35)',
             borderRadius: '20px',
-            padding: '0.85rem 1.25rem',
-            marginBottom: '2rem',
+            padding: '0.85rem 1rem',
+            marginBottom: '1.5rem',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            gap: '1rem',
-            boxShadow: '0 8px 24px rgba(0, 214, 143, 0.15)',
+            gap: '0.75rem',
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               <div style={{
-                width: '46px',
-                height: '46px',
+                width: '44px',
+                height: '44px',
                 borderRadius: '50%',
                 overflow: 'hidden',
                 border: '2px solid #00d68f',
                 boxShadow: '0 0 12px rgba(0, 214, 143, 0.4)',
+                flexShrink: 0,
               }}>
                 <img
-                  src={currentAvatar.avatarImg || '/avatars/frog_avatar.jpg'}
+                  src={currentAvatar?.avatarImg || '/avatars/frog_avatar.jpg'}
                   alt="Your Avatar"
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
               </div>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <span style={{ fontWeight: 700, fontSize: '1rem', color: '#ffffff' }}>
-                    {gameState.playerName || 'Officer Nova'}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <span style={{ fontWeight: 800, fontSize: '0.9375rem', color: '#ffffff' }}>
+                    {gameState?.playerName || 'Officer Nova'}
                   </span>
-                  <span style={{
-                    fontSize: '0.65rem',
-                    fontFamily: 'var(--font-mono)',
-                    color: '#00d68f',
-                    background: 'rgba(0, 214, 143, 0.15)',
-                    padding: '0.15rem 0.5rem',
-                    borderRadius: '100px',
-                    fontWeight: 600,
-                  }}>
-                    YOU
-                  </span>
+                  <span className="badge badge-green" style={{ fontSize: '0.6875rem', padding: '1px 6px' }}>YOU</span>
                 </div>
                 <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
-                  {currentAvatar.headgearName || 'Emerald Frog Hat'}
+                  {currentAvatar?.headgearName || 'Emerald Frog Hat'}
                 </div>
               </div>
             </div>
 
             <div style={{ textAlign: 'right' }}>
               <div style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: '1.25rem',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '1.15rem',
                 fontWeight: 800,
                 color: '#00d68f',
               }}>
-                {gameState.score * 10} lvl
+                {(gameState?.score || 0) * 10} lvl
               </div>
-              <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontFamily: 'var(--font-mono)' }}>
-                {gameState.score} ECO PTS
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontFamily: 'var(--font-mono)' }}>
+                {gameState?.score || 0} ECO PTS
               </div>
             </div>
           </div>
         )}
 
-        {/* TOP 3 PODIUM (Exact layout from the left panel in the reference screenshot) */}
+        {/* TOP 3 PODIUM (Responsive Fluid Columns) */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1.15fr 1fr',
-          gap: '0.75rem',
+          gap: '0.45rem',
           alignItems: 'flex-end',
-          marginBottom: '2rem',
-          padding: '0 0.5rem',
+          marginBottom: '1.5rem',
         }}>
-          
-          {/* #2 PODIUM (Left - Cowboy) */}
+          {/* #2 PODIUM (Left) */}
           {top2 && (
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}>
-              {/* Avatar circle */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <div style={{
-                position: 'relative',
-                marginBottom: '-16px',
+                width: 'clamp(58px, 17vw, 76px)',
+                height: 'clamp(58px, 17vw, 76px)',
+                borderRadius: '50%',
+                overflow: 'hidden',
+                border: '2.5px solid #94a3b8',
+                marginBottom: '-14px',
                 zIndex: 2,
+                background: '#152238',
               }}>
-                <div style={{
-                  width: '84px',
-                  height: '84px',
-                  borderRadius: '50%',
-                  overflow: 'hidden',
-                  border: '3px solid #94a3b8',
-                  boxShadow: '0 8px 20px rgba(0,0,0,0.5)',
-                  background: '#152238',
-                }}>
-                  <img
-                    src={top2.avatarImg}
-                    alt={top2.name}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                </div>
+                <img src={top2.avatarImg} alt={top2.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
 
-              {/* Podium Base #2 */}
               <div style={{
                 width: '100%',
-                height: '115px',
+                height: '105px',
                 background: 'linear-gradient(180deg, #1f2f4c 0%, #131f33 100%)',
                 border: '1.5px solid rgba(255, 255, 255, 0.1)',
                 borderTop: 'none',
-                borderRadius: '20px 20px 14px 14px',
+                borderRadius: '16px 16px 12px 12px',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: '1.25rem 0.5rem 0.5rem',
-                boxShadow: '0 10px 25px rgba(0,0,0,0.4)',
+                padding: '1rem 0.25rem 0.4rem',
               }}>
-                <div style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '2rem',
-                  fontWeight: 900,
-                  color: '#94a3b8',
-                  lineHeight: 1,
-                  marginBottom: '0.25rem',
-                }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.75rem', fontWeight: 900, color: '#94a3b8', lineHeight: 1 }}>
                   2
                 </div>
-                <div style={{
-                  fontWeight: 700,
-                  fontSize: '0.82rem',
-                  color: '#ffffff',
-                  textAlign: 'center',
-                  maxWidth: '90%',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}>
+                <div style={{ fontWeight: 700, fontSize: '0.8125rem', color: '#ffffff', maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {top2.name}
                 </div>
-                <div style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.7rem',
-                  color: '#38bdf8',
-                  fontWeight: 600,
-                }}>
-                  {top2.level}
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: '#38bdf8', fontWeight: 700 }}>
+                  {top2.score} pts
                 </div>
               </div>
             </div>
           )}
 
-          {/* #1 PODIUM (Center - Tallest, Crown / Chief) */}
+          {/* #1 PODIUM (Center - Tallest) */}
           {top1 && (
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}>
-              {/* Crown Icon floating above avatar */}
-              <div style={{
-                color: '#facc15',
-                marginBottom: '4px',
-                animation: 'bounce 2s infinite',
-                filter: 'drop-shadow(0 2px 8px rgba(250, 204, 21, 0.6))',
-              }}>
-                <Crown size={28} />
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div style={{ color: '#facc15', marginBottom: '2px', filter: 'drop-shadow(0 2px 6px rgba(250, 204, 21, 0.6))' }}>
+                <Crown size={24} />
               </div>
 
-              {/* Avatar circle */}
               <div style={{
-                position: 'relative',
-                marginBottom: '-20px',
+                width: 'clamp(68px, 20vw, 88px)',
+                height: 'clamp(68px, 20vw, 88px)',
+                borderRadius: '50%',
+                overflow: 'hidden',
+                border: '3px solid #facc15',
+                boxShadow: '0 0 20px rgba(250, 204, 21, 0.4)',
+                marginBottom: '-16px',
                 zIndex: 2,
+                background: '#152238',
               }}>
-                <div style={{
-                  width: '98px',
-                  height: '98px',
-                  borderRadius: '50%',
-                  overflow: 'hidden',
-                  border: '3.5px solid #facc15',
-                  boxShadow: '0 0 25px rgba(250, 204, 21, 0.45), 0 8px 25px rgba(0,0,0,0.6)',
-                  background: '#152238',
-                }}>
-                  <img
-                    src={top1.avatarImg}
-                    alt={top1.name}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                </div>
+                <img src={top1.avatarImg} alt={top1.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
 
-              {/* Podium Base #1 */}
               <div style={{
                 width: '100%',
-                height: '145px',
+                height: '130px',
                 background: 'linear-gradient(180deg, #274068 0%, #15243d 100%)',
                 border: '2px solid rgba(250, 204, 21, 0.4)',
                 borderTop: 'none',
-                borderRadius: '24px 24px 16px 16px',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '1.5rem 0.5rem 0.5rem',
-                boxShadow: '0 12px 35px rgba(0,0,0,0.5)',
-              }}>
-                <div style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '2.5rem',
-                  fontWeight: 900,
-                  color: '#facc15',
-                  lineHeight: 1,
-                  marginBottom: '0.25rem',
-                }}>
-                  1
-                </div>
-                <div style={{
-                  fontWeight: 800,
-                  fontSize: '0.92rem',
-                  color: '#ffffff',
-                  textAlign: 'center',
-                  maxWidth: '90%',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}>
-                  {top1.name}
-                </div>
-                <div style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.75rem',
-                  color: '#facc15',
-                  fontWeight: 700,
-                }}>
-                  {top1.level}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* #3 PODIUM (Right - Pirate) */}
-          {top3 && (
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}>
-              {/* Avatar circle */}
-              <div style={{
-                position: 'relative',
-                marginBottom: '-16px',
-                zIndex: 2,
-              }}>
-                <div style={{
-                  width: '80px',
-                  height: '80px',
-                  borderRadius: '50%',
-                  overflow: 'hidden',
-                  border: '3px solid #cd7f32',
-                  boxShadow: '0 8px 20px rgba(0,0,0,0.5)',
-                  background: '#152238',
-                }}>
-                  <img
-                    src={top3.avatarImg}
-                    alt={top3.name}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                </div>
-              </div>
-
-              {/* Podium Base #3 */}
-              <div style={{
-                width: '100%',
-                height: '98px',
-                background: 'linear-gradient(180deg, #1c2b45 0%, #111a2c 100%)',
-                border: '1.5px solid rgba(255, 255, 255, 0.1)',
-                borderTop: 'none',
                 borderRadius: '20px 20px 14px 14px',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: '1.25rem 0.5rem 0.5rem',
-                boxShadow: '0 10px 25px rgba(0,0,0,0.4)',
+                padding: '1.25rem 0.25rem 0.5rem',
               }}>
-                <div style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '1.8rem',
-                  fontWeight: 900,
-                  color: '#cd7f32',
-                  lineHeight: 1,
-                  marginBottom: '0.2rem',
-                }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: '2.2rem', fontWeight: 900, color: '#facc15', lineHeight: 1 }}>
+                  1
+                </div>
+                <div style={{ fontWeight: 800, fontSize: '0.875rem', color: '#ffffff', maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {top1.name}
+                </div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8125rem', color: '#facc15', fontWeight: 800 }}>
+                  {top1.score} pts
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* #3 PODIUM (Right) */}
+          {top3 && (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div style={{
+                width: 'clamp(56px, 16vw, 72px)',
+                height: 'clamp(56px, 16vw, 72px)',
+                borderRadius: '50%',
+                overflow: 'hidden',
+                border: '2.5px solid #cd7f32',
+                marginBottom: '-14px',
+                zIndex: 2,
+                background: '#152238',
+              }}>
+                <img src={top3.avatarImg} alt={top3.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+
+              <div style={{
+                width: '100%',
+                height: '92px',
+                background: 'linear-gradient(180deg, #1c2b45 0%, #111a2c 100%)',
+                border: '1.5px solid rgba(255, 255, 255, 0.1)',
+                borderTop: 'none',
+                borderRadius: '16px 16px 12px 12px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '1rem 0.25rem 0.4rem',
+              }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.6rem', fontWeight: 900, color: '#cd7f32', lineHeight: 1 }}>
                   3
                 </div>
-                <div style={{
-                  fontWeight: 700,
-                  fontSize: '0.8rem',
-                  color: '#ffffff',
-                  textAlign: 'center',
-                  maxWidth: '90%',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}>
+                <div style={{ fontWeight: 700, fontSize: '0.8125rem', color: '#ffffff', maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {top3.name}
                 </div>
-                <div style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.68rem',
-                  color: '#38bdf8',
-                  fontWeight: 600,
-                }}>
-                  {top3.level}
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: '#38bdf8', fontWeight: 700 }}>
+                  {top3.score} pts
                 </div>
               </div>
             </div>
           )}
         </div>
 
-        {/* RANKED LIST (#4 through #8) - Sleek rounded pill cards matching the reference */}
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0.65rem',
-        }}>
-          {restEntries.map((entry) => {
+        {/* RANKED LIST (#4 through #12) (Single-Column Cards) */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+          {restEntries.map(entry => {
             const isCurrentPlayer = entry.isPlayer;
             return (
               <div
                 key={entry.rank}
                 style={{
-                  background: isCurrentPlayer
-                    ? 'linear-gradient(90deg, rgba(0, 214, 143, 0.15) 0%, rgba(17, 28, 54, 0.95) 100%)'
-                    : 'linear-gradient(90deg, #152238 0%, #101c30 100%)',
-                  border: isCurrentPlayer
-                    ? '1.5px solid #00d68f'
-                    : '1px solid rgba(255, 255, 255, 0.08)',
-                  borderRadius: '18px',
-                  padding: '0.75rem 1.25rem',
+                  background: isCurrentPlayer ? 'rgba(0, 214, 143, 0.12)' : 'rgba(255, 255, 255, 0.04)',
+                  border: `1.5px solid ${isCurrentPlayer ? '#00d68f' : 'rgba(255, 255, 255, 0.08)'}`,
+                  borderRadius: '16px',
+                  padding: '0.75rem 1rem',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'space-between',
-                  boxShadow: '0 4px 15px rgba(0,0,0,0.25)',
-                  transition: 'transform 0.15s ease',
+                  gap: '0.75rem',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  {/* Rank number badge */}
-                  <span style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.9rem',
-                    fontWeight: 700,
-                    color: '#94a3b8',
-                    width: '20px',
-                    textAlign: 'center',
-                  }}>
-                    {entry.rank}
-                  </span>
+                <div style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.9375rem',
+                  fontWeight: 800,
+                  color: '#94a3b8',
+                  width: '26px',
+                  textAlign: 'center',
+                  flexShrink: 0,
+                }}>
+                  #{entry.rank}
+                </div>
 
-                  {/* Circular Avatar */}
-                  <div style={{
-                    width: '44px',
-                    height: '44px',
-                    borderRadius: '50%',
-                    overflow: 'hidden',
-                    border: isCurrentPlayer ? '2px solid #00d68f' : '1.5px solid rgba(255,255,255,0.15)',
-                    background: '#0a1120',
-                    flexShrink: 0,
-                  }}>
-                    <img
-                      src={entry.avatarImg}
-                      alt={entry.name}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
+                <div style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  overflow: 'hidden',
+                  border: `1.5px solid ${isCurrentPlayer ? '#00d68f' : 'rgba(255,255,255,0.15)'}`,
+                  flexShrink: 0,
+                }}>
+                  <img src={entry.avatarImg} alt={entry.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <span style={{ fontSize: '0.9375rem', fontWeight: 700, color: '#ffffff' }}>
+                      {entry.name}
+                    </span>
+                    {isCurrentPlayer && (
+                      <span className="badge badge-green" style={{ fontSize: '0.625rem', padding: '1px 5px' }}>YOU</span>
+                    )}
                   </div>
-
-                  {/* Player Name and Hat */}
-                  <div>
-                    <div style={{
-                      fontWeight: 700,
-                      fontSize: '0.95rem',
-                      color: isCurrentPlayer ? '#00d68f' : '#ffffff',
-                    }}>
-                      {entry.name} {isCurrentPlayer && '(You)'}
-                    </div>
-                    <div style={{
-                      fontSize: '0.72rem',
-                      color: '#94a3b8',
-                    }}>
-                      {entry.headgear}
-                    </div>
+                  <div style={{ fontSize: '0.75rem', color: '#94a3b8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {entry.headgear}
                   </div>
                 </div>
 
-                {/* Level / Score */}
-                <div style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '1rem',
-                  fontWeight: 700,
-                  color: isCurrentPlayer ? '#00d68f' : '#e2e8f0',
-                  letterSpacing: '0.02em',
-                }}>
-                  {entry.level}
+                <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.9375rem', fontWeight: 800, color: '#00d68f' }}>
+                    {entry.score}
+                  </div>
+                  <div style={{ fontSize: '0.6875rem', color: '#94a3b8', fontFamily: 'var(--font-mono)' }}>
+                    PTS
+                  </div>
                 </div>
               </div>
             );
           })}
         </div>
+
+        {/* Sticky Action Button: Return to Map */}
+        <div style={{
+          position: 'sticky',
+          bottom: 'calc(var(--bottom-nav-total-height, 70px) + 0.5rem)',
+          zIndex: 40,
+          padding: '0.5rem 0',
+        }}>
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate('map')}
+            style={{
+              width: '100%',
+              minHeight: '52px',
+              fontSize: '1rem',
+              fontWeight: 800,
+              boxShadow: '0 8px 25px rgba(0, 214, 143, 0.4)',
+              borderRadius: '16px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem',
+            }}
+          >
+            <span>RETURN TO 3D SANCTUARY MAP</span>
+            <ArrowRight size={18} />
+          </button>
+        </div>
+
       </div>
     </div>
   );

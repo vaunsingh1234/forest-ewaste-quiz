@@ -194,7 +194,6 @@ export default function FinalMystery({ gameState, updateState, onComplete }) {
       };
     }
 
-    // Check if hazardous items discovered but no safety/recycle strategy selected
     const hasHazardSafety = selectedActions.includes('dispose') || selectedActions.includes('recycle');
     if (hazardsCount > 0 && !hasHazardSafety) {
       return {
@@ -203,7 +202,6 @@ export default function FinalMystery({ gameState, updateState, onComplete }) {
       };
     }
 
-    // Check reasoning consistency
     if (selectedReasoning.includes('safe-hazards') && !hasHazardSafety) {
       return {
         title: 'PLAN NEEDS REVIEW',
@@ -235,7 +233,6 @@ export default function FinalMystery({ gameState, updateState, onComplete }) {
       return;
     }
 
-    // Calculate evaluation metrics
     const hasRepair = selectedActions.includes('repair');
     const hasReuse = selectedActions.includes('reuse');
     const hasDonate = selectedActions.includes('donate');
@@ -298,238 +295,209 @@ export default function FinalMystery({ gameState, updateState, onComplete }) {
       missedOpportunities.push('Reuse Program could have been funded with available capital.');
     }
 
-    const bonusPoints = Math.round(overallImpact * 2.5);
-
-    updateState(prev => ({
-      ...prev,
-      score: (prev?.score || 0) + bonusPoints + 150,
-      ecoImpact: Math.min(100, (prev?.ecoImpact || 0) + Math.round(overallImpact * 0.2)),
-      resourceRecovery: Math.min(100, (prev?.resourceRecovery || 0) + Math.round(recoveryScore * 0.2)),
-      cityRisk: Math.max(0, (prev?.cityRisk || 50) - Math.round(safetyScore * 0.25)),
-    }));
-
     setEvaluationResult({
-      budgetSpent: totalCost,
+      overallImpact,
       problemCoverage,
       safetyCoverage: safetyScore,
       resourceRecovery: recoveryScore,
       lifeExtension: lifeExtensionScore,
-      overallImpact,
+      budgetSpent: totalCost,
       strongDecisions,
       weakAreas,
       missedOpportunities,
     });
 
+    updateState(prev => ({
+      ...prev,
+      score: (prev?.score || 0) + (overallImpact >= 75 ? 200 : 100),
+      finalPlanScore: overallImpact,
+    }));
+
     setPhase('result');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <div className="page-enter" style={{ padding: '2rem 0 4rem' }}>
-      <div className="container">
+    <div className="page-enter final-mystery-page" style={{
+      minHeight: '100dvh',
+      padding: 'calc(var(--safe-top, 0px) + 0.75rem) 0.75rem calc(var(--bottom-nav-total-height, 70px) + 1.5rem)',
+      background: 'radial-gradient(ellipse at top, #14281f 0%, #041009 85%)',
+      color: '#f0fdf4',
+      overflowX: 'hidden',
+    }}>
+      <div className="container" style={{ maxWidth: '640px', margin: '0 auto', padding: '0 0.25rem' }}>
         
-        {/* TOP HEADER */}
-        <div style={{ marginBottom: '2rem' }}>
-          <div className="data-label" style={{ marginBottom: '0.5rem', color: 'var(--accent-amber)' }}>
-            FINAL CHALLENGE — ACTION PLAN
+        {/* Header */}
+        <div style={{ marginBottom: '1.25rem' }}>
+          <div className="data-label" style={{ color: '#00d68f', fontSize: '0.75rem', letterSpacing: '0.1em', marginBottom: '0.35rem' }}>
+            FINAL STAGE // SYSTEM SYNTHESIS
           </div>
-          <h1 style={{ fontSize: '1.75rem', fontFamily: 'var(--font-display)', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
-            🔍 NOVA CITY E-WASTE ACTION PLAN
+          <h1 style={{
+            fontSize: '1.4rem',
+            fontFamily: 'var(--font-display)',
+            letterSpacing: '0.04em',
+            margin: '0 0 0.35rem',
+            color: '#ffffff',
+            fontWeight: 800,
+          }}>
+            THE FINAL MYSTERY
           </h1>
-          <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, maxWidth: '720px' }}>
-            Transform your investigation evidence into a practical, budgeted policy strategy for Nova City.
+          <p style={{ color: '#cbd5e1', fontSize: '0.875rem', lineHeight: 1.5, margin: 0 }}>
+            {phase === 'reveal' && 'Connect investigation evidence across all 5 districts to diagnose Nova City\'s core crisis.'}
+            {phase === 'action-plan' && 'Formulate a comprehensive action plan within the city budget of ₹10,000.'}
+            {phase === 'result' && 'Review your action plan evaluation and systemic environmental impact!'}
           </p>
         </div>
 
-        {/* PHASE 1: REVEAL MYSTERY CAUSES */}
+        {/* PHASE 1: REVEAL MYSTERY CAUSES (Single Column) */}
         {phase === 'reveal' && (
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div style={{
-              background: 'var(--bg-card)',
-              border: '1px solid var(--border-card)',
-              borderRadius: 'var(--radius-xl)',
-              padding: '1.5rem',
-              marginBottom: '1.5rem',
+              background: 'rgba(6, 30, 18, 0.75)',
+              border: '1.5px solid rgba(74, 222, 128, 0.25)',
+              borderRadius: '20px',
+              padding: '1.25rem',
             }}>
-              <div style={{ marginBottom: '1.25rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                  <div className="status-dot status-dot-amber" />
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                    CASE FILE — NOVA CITY E-WASTE CRISIS
-                  </span>
-                </div>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9375rem', lineHeight: 1.7 }}>
-                  The investigation has revealed that Nova City's e-waste crisis was caused by <strong style={{ color: 'var(--text-primary)' }}>5 critical behavioral patterns</strong>. 
-                  Click each finding to inspect the evidence.
-                </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                <div className="status-dot status-dot-amber" />
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8125rem', color: '#86efac', fontWeight: 600 }}>
+                  CASE FILE — 5 BEHAVIORAL PATTERNS
+                </span>
               </div>
+              <p style={{ color: '#cbd5e1', fontSize: '0.875rem', lineHeight: 1.5, margin: '0 0 1rem 0' }}>
+                Tap each finding below to uncover critical root causes documented by your investigation:
+              </p>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', marginBottom: '1.25rem' }}>
                 {MYSTERY_CAUSES.map((cause, i) => {
                   const isRevealed = revealedCauses.includes(cause.id);
                   return (
-                    <div
+                    <button
                       key={cause.id}
                       onClick={() => handleRevealCause(cause.id)}
                       style={{
-                        background: isRevealed ? 'rgba(239,68,68,0.06)' : 'rgba(255,255,255,0.03)',
-                        border: `1px solid ${isRevealed ? 'rgba(239,68,68,0.25)' : 'var(--border-subtle)'}`,
-                        borderRadius: 'var(--radius-lg)',
-                        padding: '1rem 1.25rem',
+                        width: '100%',
+                        minHeight: '56px',
+                        padding: '0.85rem 1rem',
+                        background: isRevealed ? 'rgba(0, 214, 143, 0.1)' : 'rgba(255, 255, 255, 0.04)',
+                        border: `1.5px solid ${isRevealed ? '#00d68f' : 'rgba(255, 255, 255, 0.1)'}`,
+                        borderRadius: '16px',
                         cursor: isRevealed ? 'default' : 'pointer',
-                        transition: 'all 0.2s',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '1rem',
+                        gap: '0.85rem',
+                        textAlign: 'left',
+                        color: '#ffffff',
+                        transition: 'all 0.15s ease',
                       }}
                     >
-                      <div style={{ fontSize: '1.5rem', width: '36px', textAlign: 'center' }}>
+                      <span style={{ fontSize: '1.75rem', lineHeight: 1, flexShrink: 0 }}>
                         {isRevealed ? cause.icon : '❓'}
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{
-                          fontWeight: 600,
-                          fontSize: '0.9375rem',
-                          color: isRevealed ? 'var(--text-primary)' : 'var(--text-secondary)',
-                          marginBottom: isRevealed ? '0.25rem' : 0,
-                        }}>
-                          {isRevealed ? cause.text : `Finding #${i + 1} — Click to analyze evidence`}
+                      </span>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontWeight: 700, fontSize: '0.9375rem', color: '#ffffff' }}>
+                          {isRevealed ? cause.text : `Finding #${i + 1} — Tap to analyze evidence`}
                         </div>
                         {isRevealed && (
-                          <div style={{
-                            fontSize: '0.8125rem',
-                            color: 'var(--accent-red)',
-                            animation: 'fadeIn 0.3s ease',
-                          }}>
-                            ⚠️ Impact: {cause.impact}
+                          <div style={{ fontSize: '0.8125rem', color: '#fca5a5', marginTop: '2px' }}>
+                            ⚠️ {cause.impact}
                           </div>
                         )}
                       </div>
                       {!isRevealed && (
-                        <div style={{
+                        <span style={{
                           fontFamily: 'var(--font-mono)',
-                          fontSize: '0.625rem',
-                          color: 'var(--accent-amber)',
-                          letterSpacing: '0.1em',
+                          fontSize: '0.75rem',
+                          color: '#f59e0b',
+                          fontWeight: 700,
+                          flexShrink: 0,
                         }}>
                           +20 pts
-                        </div>
+                        </span>
                       )}
-                    </div>
+                    </button>
                   );
                 })}
               </div>
 
               {allRevealed && (
-                <div style={{
-                  padding: '1.25rem',
-                  background: 'rgba(0,180,216,0.06)',
-                  border: '1px solid rgba(0,180,216,0.2)',
-                  borderRadius: 'var(--radius-lg)',
-                  marginBottom: '1.25rem',
-                  animation: 'fadeUp 0.4s ease',
-                }}>
-                  <h3 style={{ color: 'var(--accent-blue)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <Sparkles size={18} /> Source Root Causes Identified
-                  </h3>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.7 }}>
-                    Nova City's e-waste crisis requires a balanced strategy combining device life extension, safe hazard containment, and raw material recycling.
-                  </p>
-                </div>
-              )}
-
-              {allRevealed && (
-                <button className="btn btn-primary" onClick={() => setPhase('action-plan')}>
-                  PROCEED TO ACTION PLAN DESIGN <ChevronRight size={14} />
+                <button
+                  className="btn btn-primary"
+                  onClick={() => setPhase('action-plan')}
+                  style={{ width: '100%', minHeight: '52px', fontSize: '1rem', fontWeight: 800 }}
+                >
+                  PROCEED TO ACTION PLAN DESIGN <ChevronRight size={16} />
                 </button>
               )}
             </div>
           </div>
         )}
 
-        {/* PHASE 2: STRATEGIC ACTION PLAN */}
+        {/* PHASE 2: STRATEGIC ACTION PLAN (Single Column Cards + Sticky Budget/Action Bar) */}
         {phase === 'action-plan' && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem' }}>
-
-            {/* SECTION A: FINAL CASE FILE (INVESTIGATION SUMMARY) */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            
+            {/* Case File Metrics (Single Column) */}
             <div style={{
-              background: 'var(--bg-card)',
-              border: '1px solid var(--border-card)',
-              borderRadius: 'var(--radius-xl)',
-              padding: '1.5rem',
+              background: 'rgba(6, 30, 18, 0.75)',
+              border: '1.5px solid rgba(74, 222, 128, 0.25)',
+              borderRadius: '20px',
+              padding: '1.25rem',
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-                <FileText size={18} style={{ color: 'var(--accent-amber)' }} />
-                <h2 style={{ fontSize: '1.125rem', margin: 0, fontFamily: 'var(--font-display)' }}>
-                  NOVA CITY — FINAL CASE FILE
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.85rem' }}>
+                <FileText size={18} color="#f59e0b" />
+                <h2 style={{ fontSize: '1.05rem', margin: 0, fontWeight: 800 }}>
+                  NOVA CITY INVESTIGATION AUDIT
                 </h2>
               </div>
-              
+
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
-                gap: '0.75rem',
-                marginBottom: '1.25rem',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '0.45rem',
+                marginBottom: '0.75rem',
               }}>
-                <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '0.75rem', textAlign: 'center' }}>
-                  <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--accent-blue)' }}>{inspectedCount}</div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>Devices Investigated</div>
+                <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: '12px', padding: '0.5rem', textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#00b4d8' }}>{inspectedCount}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Inspected</div>
                 </div>
-
-                <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '0.75rem', textAlign: 'center' }}>
-                  <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--accent-green)' }}>{repairedCount}</div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>Repairable Devices</div>
+                <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: '12px', padding: '0.5rem', textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#00d68f' }}>{repairedCount}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Repairable</div>
                 </div>
-
-                <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '0.75rem', textAlign: 'center' }}>
-                  <div style={{ fontSize: '1.25rem', fontWeight: 700, color: '#3b82f6' }}>{donatedCount}</div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>Working Devices</div>
+                <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: '12px', padding: '0.5rem', textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#ef4444' }}>{hazardsCount}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Hazards</div>
                 </div>
-
-                <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '0.75rem', textAlign: 'center' }}>
-                  <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--accent-red)' }}>{hazardsCount}</div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>Hazardous Items</div>
-                </div>
-
-                <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '0.75rem', textAlign: 'center' }}>
-                  <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--accent-purple)' }}>{recycledCount}</div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>End-of-Life Items</div>
-                </div>
-              </div>
-
-              <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                <strong>Key Discovered Issues:</strong> Widespread premature replacement in Residential zones, damaged battery hazards in Scrap Yard, unrefined rare metal recovery in Recycling Center, and high demand for fixable tech in Repair Lab.
               </div>
             </div>
 
-            {/* SECTION B: CITY PRIORITIES */}
+            {/* City Priorities Cards */}
             <div style={{
-              background: 'var(--bg-card)',
-              border: '1px solid var(--border-card)',
-              borderRadius: 'var(--radius-xl)',
-              padding: '1.5rem',
+              background: 'rgba(6, 30, 18, 0.75)',
+              border: '1.5px solid rgba(74, 222, 128, 0.25)',
+              borderRadius: '20px',
+              padding: '1.25rem',
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-                <Layers size={18} style={{ color: 'var(--accent-blue)' }} />
-                <h2 style={{ fontSize: '1.125rem', margin: 0, fontFamily: 'var(--font-display)' }}>
-                  NOVA CITY PRIORITIES
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                <Layers size={18} color="#00b4d8" />
+                <h2 style={{ fontSize: '1.05rem', margin: 0, fontWeight: 800 }}>
+                  NOVA CITY SUSTAINABILITY PRIORITIES
                 </h2>
               </div>
-              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-                Your action plan should target Nova City's 4 core sustainability goals:
-              </p>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '0.75rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 {CITY_PRIORITIES.map(p => (
                   <div key={p.id} style={{
-                    background: 'rgba(255,255,255,0.02)',
-                    border: '1px solid var(--border-subtle)',
-                    borderRadius: 'var(--radius-lg)',
-                    padding: '0.875rem 1rem',
+                    background: 'rgba(255,255,255,0.03)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: '12px',
+                    padding: '0.65rem 0.85rem',
                   }}>
-                    <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
+                    <div style={{ fontSize: '0.875rem', fontWeight: 700, color: '#f0fdf4' }}>
                       {p.id}. {p.title}
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                    <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '2px', lineHeight: 1.4 }}>
                       {p.desc}
                     </div>
                   </div>
@@ -537,377 +505,290 @@ export default function FinalMystery({ gameState, updateState, onComplete }) {
               </div>
             </div>
 
-            {/* SECTION C: BUDGET & STRATEGIES */}
+            {/* Strategy Selection Cards */}
             <div style={{
-              background: 'var(--bg-card)',
-              border: '1px solid var(--border-card)',
-              borderRadius: 'var(--radius-xl)',
-              padding: '1.5rem',
+              background: 'rgba(6, 30, 18, 0.75)',
+              border: '1.5px solid rgba(74, 222, 128, 0.25)',
+              borderRadius: '20px',
+              padding: '1.25rem',
             }}>
-              {/* Budget Bar Header */}
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                gap: '1rem',
-                background: remainingBudget < 0 ? 'rgba(239,68,68,0.1)' : 'rgba(0,214,143,0.06)',
-                border: `1px solid ${remainingBudget < 0 ? 'rgba(239,68,68,0.3)' : 'rgba(0,214,143,0.25)'}`,
-                borderRadius: 'var(--radius-lg)',
-                padding: '1rem 1.25rem',
-                marginBottom: '1.5rem',
-              }}>
-                <div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
-                    IMPLEMENTATION BUDGET
-                  </div>
-                  <div style={{ fontSize: '1.25rem', fontWeight: 700, color: remainingBudget < 0 ? 'var(--accent-red)' : 'var(--text-primary)', marginTop: '2px' }}>
-                    Available: ₹{TOTAL_BUDGET.toLocaleString()}
-                  </div>
-                </div>
-
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
-                    REMAINING BUDGET
-                  </div>
-                  <div style={{
-                    fontSize: '1.35rem',
-                    fontWeight: 800,
-                    fontFamily: 'var(--font-mono)',
-                    color: remainingBudget < 0 ? 'var(--accent-red)' : 'var(--accent-green)',
-                    marginTop: '2px',
-                  }}>
-                    ₹{remainingBudget.toLocaleString()}
-                  </div>
-                </div>
+              <div className="data-label" style={{ color: '#00d68f', fontSize: '0.75rem', marginBottom: '0.5rem' }}>
+                ACTION STRATEGIES (SELECT 2 OR MORE)
               </div>
 
-              {remainingBudget < 0 && (
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.75rem',
-                  background: 'rgba(239,68,68,0.12)',
-                  border: '1px solid rgba(239,68,68,0.4)',
-                  borderRadius: 'var(--radius-md)',
-                  padding: '0.875rem 1rem',
-                  marginBottom: '1.5rem',
-                  color: '#fca5a5',
-                  fontSize: '0.875rem',
-                  animation: 'headShake 0.4s ease-in-out',
-                }}>
-                  <AlertTriangle size={20} style={{ flexShrink: 0, color: 'var(--accent-red)' }} />
-                  <div>
-                    <strong>BUDGET EXCEEDED:</strong> The action plan cannot be implemented within the allocated ₹10,000 budget. Deselect a strategy to balance your resources.
-                  </div>
-                </div>
-              )}
-
-              <h3 style={{ fontSize: '1rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
-                Select Action Strategies (Budget Cap: ₹10,000)
-              </h3>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem', marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.25rem' }}>
                 {STRATEGIES.map(strategy => {
                   const isSelected = selectedActions.includes(strategy.id);
                   const isOverIfAdded = !isSelected && (totalCost + strategy.cost > TOTAL_BUDGET);
 
                   return (
-                    <div
+                    <button
                       key={strategy.id}
                       onClick={() => toggleAction(strategy.id)}
                       style={{
-                        background: isSelected 
-                          ? 'rgba(0,214,143,0.06)' 
-                          : isOverIfAdded 
-                            ? 'rgba(255,255,255,0.015)' 
-                            : 'rgba(255,255,255,0.03)',
-                        border: `1px solid ${
-                          isSelected 
-                            ? 'rgba(0,214,143,0.4)' 
-                            : isOverIfAdded 
-                              ? 'rgba(239,68,68,0.2)' 
-                              : 'var(--border-subtle)'
-                        }`,
-                        borderRadius: 'var(--radius-lg)',
-                        padding: '1.125rem 1.25rem',
+                        width: '100%',
+                        padding: '0.85rem 1rem',
+                        background: isSelected ? 'rgba(0, 214, 143, 0.15)' : 'rgba(255, 255, 255, 0.04)',
+                        border: `1.5px solid ${isSelected ? '#00d68f' : isOverIfAdded ? 'rgba(239,68,68,0.3)' : 'rgba(255, 255, 255, 0.1)'}`,
+                        borderRadius: '16px',
                         cursor: 'pointer',
-                        transition: 'all 0.2s',
+                        textAlign: 'left',
+                        color: '#ffffff',
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: '0.75rem',
+                        gap: '0.45rem',
+                        transition: 'all 0.15s ease',
                       }}
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
                           <div style={{
-                            width: '24px',
-                            height: '24px',
+                            width: '22px',
+                            height: '22px',
                             borderRadius: '6px',
-                            border: `2px solid ${isSelected ? 'var(--accent-green)' : 'var(--border-card)'}`,
-                            background: isSelected ? 'var(--accent-green)' : 'transparent',
+                            border: `2px solid ${isSelected ? '#00d68f' : '#64748b'}`,
+                            background: isSelected ? '#00d68f' : 'transparent',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             flexShrink: 0,
-                            transition: 'all 0.15s',
                           }}>
-                            {isSelected && <span style={{ color: '#000', fontSize: '0.75rem', fontWeight: 800 }}>✓</span>}
+                            {isSelected && <span style={{ color: '#071b10', fontSize: '0.75rem', fontWeight: 900 }}>✓</span>}
                           </div>
-                          <span style={{ fontSize: '1.4rem' }}>{strategy.emoji}</span>
-                          <div>
-                            <span style={{ fontWeight: 700, fontSize: '0.9375rem', color: 'var(--text-primary)' }}>
-                              {strategy.label}
-                            </span>
-                          </div>
+                          <span style={{ fontSize: '1.4rem', lineHeight: 1 }}>{strategy.emoji}</span>
+                          <span style={{ fontSize: '0.9375rem', fontWeight: 800 }}>{strategy.label}</span>
                         </div>
 
-                        <div style={{
+                        <span style={{
                           fontFamily: 'var(--font-mono)',
-                          fontSize: '0.875rem',
-                          fontWeight: 700,
-                          color: isSelected ? 'var(--accent-green)' : 'var(--accent-amber)',
-                          background: 'rgba(255,255,255,0.04)',
-                          padding: '0.25rem 0.625rem',
-                          borderRadius: 'var(--radius-sm)',
-                          border: '1px solid var(--border-subtle)',
+                          fontSize: '0.8125rem',
+                          fontWeight: 800,
+                          color: isSelected ? '#00d68f' : '#f59e0b',
                         }}>
-                          Cost: ₹{strategy.cost.toLocaleString()}
-                        </div>
+                          ₹{strategy.cost.toLocaleString()}
+                        </span>
                       </div>
 
-                      <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', lineHeight: 1.6, paddingLeft: '2.5rem' }}>
-                        <div><strong>Effect:</strong> {strategy.effect}</div>
-                        <div style={{ marginTop: '0.25rem', color: 'var(--text-muted)' }}>
-                          <strong>Best suited for:</strong> {strategy.bestSuited}
-                        </div>
+                      <div style={{ fontSize: '0.8125rem', color: '#cbd5e1', lineHeight: 1.4, paddingLeft: '2.2rem' }}>
+                        {strategy.effect}
                       </div>
-                    </div>
+                    </button>
                   );
                 })}
               </div>
-            </div>
 
-            {/* SECTION D: REASONING JUSTIFICATION */}
-            <div style={{
-              background: 'var(--bg-card)',
-              border: '1px solid var(--border-card)',
-              borderRadius: 'var(--radius-xl)',
-              padding: '1.5rem',
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                <HelpCircle size={18} style={{ color: 'var(--accent-purple)' }} />
-                <h2 style={{ fontSize: '1.125rem', margin: 0, fontFamily: 'var(--font-display)' }}>
-                  WHY DID YOU CHOOSE THIS PLAN?
-                </h2>
+              {/* Reasoning Selection */}
+              <div className="data-label" style={{ color: '#c084fc', fontSize: '0.75rem', marginBottom: '0.5rem' }}>
+                JUSTIFICATION (WHY THIS PLAN?)
               </div>
-              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-                Select the core reasoning statements that best match your strategy.
-              </p>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem', marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 {REASONING_OPTIONS.map(reason => {
                   const isChecked = selectedReasoning.includes(reason.id);
                   return (
-                    <div
+                    <button
                       key={reason.id}
                       onClick={() => toggleReasoning(reason.id)}
                       style={{
-                        background: isChecked ? 'rgba(139,92,246,0.08)' : 'rgba(255,255,255,0.02)',
-                        border: `1px solid ${isChecked ? 'rgba(139,92,246,0.4)' : 'var(--border-subtle)'}`,
-                        borderRadius: 'var(--radius-lg)',
-                        padding: '0.875rem 1.125rem',
+                        width: '100%',
+                        padding: '0.75rem 0.85rem',
+                        background: isChecked ? 'rgba(192, 132, 252, 0.15)' : 'rgba(255, 255, 255, 0.03)',
+                        border: `1.5px solid ${isChecked ? '#c084fc' : 'rgba(255, 255, 255, 0.08)'}`,
+                        borderRadius: '14px',
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '0.875rem',
-                        transition: 'all 0.15s',
+                        gap: '0.65rem',
+                        textAlign: 'left',
+                        color: '#ffffff',
                       }}
                     >
                       <div style={{
                         width: '20px',
                         height: '20px',
-                        borderRadius: '4px',
-                        border: `2px solid ${isChecked ? 'var(--accent-purple)' : 'var(--border-card)'}`,
-                        background: isChecked ? 'var(--accent-purple)' : 'transparent',
+                        borderRadius: '5px',
+                        border: `2px solid ${isChecked ? '#c084fc' : '#64748b'}`,
+                        background: isChecked ? '#c084fc' : 'transparent',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         flexShrink: 0,
                       }}>
-                        {isChecked && <span style={{ color: '#fff', fontSize: '0.6875rem', fontWeight: 800 }}>✓</span>}
+                        {isChecked && <span style={{ color: '#000', fontSize: '0.7rem', fontWeight: 900 }}>✓</span>}
                       </div>
-                      <span style={{ fontSize: '0.875rem', color: isChecked ? 'var(--text-primary)' : 'var(--text-secondary)', lineHeight: 1.5 }}>
-                        {reason.text}
-                      </span>
-                    </div>
+                      <span style={{ fontSize: '0.875rem', lineHeight: 1.4 }}>{reason.text}</span>
+                    </button>
                   );
                 })}
               </div>
 
-              {/* VALIDATION ERROR DISPLAY */}
+              {/* Validation Error Banner */}
               {validationError && (
                 <div style={{
-                  background: 'rgba(239,68,68,0.1)',
-                  border: '1px solid rgba(239,68,68,0.35)',
-                  borderRadius: 'var(--radius-lg)',
-                  padding: '1.25rem',
-                  marginBottom: '1.5rem',
-                  animation: 'fadeIn 0.3s ease',
+                  marginTop: '1rem',
+                  background: 'rgba(239, 68, 68, 0.15)',
+                  border: '1.5px solid #ef4444',
+                  borderRadius: '14px',
+                  padding: '0.85rem 1rem',
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-red)', fontWeight: 700, fontSize: '0.9375rem', marginBottom: '0.5rem' }}>
-                    <AlertTriangle size={18} /> {validationError.title}
+                  <div style={{ color: '#ef4444', fontWeight: 800, fontSize: '0.875rem', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <AlertTriangle size={16} /> {validationError.title}
                   </div>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.6, margin: 0 }}>
+                  <p style={{ color: '#fca5a5', fontSize: '0.8125rem', lineHeight: 1.5, margin: 0 }}>
                     {validationError.message}
                   </p>
                 </div>
               )}
+            </div>
 
-              {/* SUBMIT BUTTON */}
-              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <button
-                  className="btn btn-primary btn-lg"
-                  onClick={handleSubmitPlan}
-                  id="submit-action-plan-btn"
-                >
-                  SUBMIT ACTION PLAN FOR CITY EVALUATION <ChevronRight size={18} />
-                </button>
+            {/* Sticky Bottom Bar for Budget Status & Submit Action */}
+            <div style={{
+              position: 'sticky',
+              bottom: 'calc(var(--bottom-nav-total-height, 70px) + 0.5rem)',
+              zIndex: 40,
+              background: 'rgba(4, 20, 12, 0.95)',
+              border: `1.5px solid ${remainingBudget < 0 ? '#ef4444' : '#00d68f'}`,
+              borderRadius: '20px',
+              padding: '0.75rem 1rem',
+              boxShadow: '0 8px 30px rgba(0,0,0,0.7)',
+              backdropFilter: 'blur(10px)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.65rem',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '0.8125rem', color: '#94a3b8', fontFamily: 'var(--font-mono)' }}>
+                  BUDGET: ₹{totalCost.toLocaleString()} / ₹{TOTAL_BUDGET.toLocaleString()}
+                </span>
+                <span style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.9375rem',
+                  fontWeight: 800,
+                  color: remainingBudget < 0 ? '#ef4444' : '#00d68f',
+                }}>
+                  {remainingBudget < 0 ? `Exceeded ₹${Math.abs(remainingBudget)}` : `Left: ₹${remainingBudget}`}
+                </span>
               </div>
+
+              <button
+                className="btn btn-primary"
+                onClick={handleSubmitPlan}
+                id="submit-action-plan-btn"
+                style={{
+                  width: '100%',
+                  minHeight: '52px',
+                  fontSize: '1rem',
+                  fontWeight: 800,
+                  opacity: remainingBudget < 0 ? 0.6 : 1,
+                }}
+              >
+                SUBMIT ACTION PLAN FOR EVALUATION →
+              </button>
             </div>
 
           </div>
         )}
 
-        {/* PHASE 3: RESULT / EVALUATION */}
+        {/* PHASE 3: EVALUATION RESULT (Single Column Cards) */}
         {phase === 'result' && evaluationResult && (
-          <div style={{ maxWidth: '780px', margin: '0 auto' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             
-            {/* OVERALL SCORE CARD */}
+            {/* Overall Score Card */}
             <div style={{
-              background: 'rgba(0,214,143,0.05)',
-              border: '1px solid rgba(0,214,143,0.3)',
-              borderRadius: 'var(--radius-xl)',
-              padding: '2rem',
-              marginBottom: '1.5rem',
+              background: 'rgba(6, 30, 18, 0.85)',
+              border: '2px solid #00d68f',
+              borderRadius: '24px',
+              padding: '1.5rem',
+              textAlign: 'center',
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
-                <div>
-                  <div className="badge badge-green" style={{ marginBottom: '0.5rem' }}>PLAN EVALUATED</div>
-                  <h2 style={{ fontSize: '1.5rem', margin: 0, color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>
-                    NOVA CITY ACTION PLAN — EVALUATION
-                  </h2>
-                </div>
-
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>OVERALL IMPACT SCORE</div>
-                  <div style={{ fontSize: '2.25rem', fontWeight: 800, color: 'var(--accent-green)', fontFamily: 'var(--font-mono)' }}>
-                    {evaluationResult.overallImpact}%
-                  </div>
-                </div>
-              </div>
-
-              {/* METRICS GRID */}
+              <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🏆</div>
+              <div className="badge badge-green" style={{ marginBottom: '0.5rem' }}>EVALUATION COMPLETE</div>
+              <h2 style={{ fontSize: '1.3rem', margin: '0 0 0.5rem 0', fontWeight: 800 }}>
+                ACTION PLAN IMPACT RATING
+              </h2>
               <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
-                gap: '0.875rem',
-                marginBottom: '1.75rem',
+                fontSize: '3rem',
+                fontWeight: 900,
+                color: '#00d68f',
+                fontFamily: 'var(--font-mono)',
+                lineHeight: 1,
+                margin: '0.5rem 0',
               }}>
-                <div style={{ background: 'rgba(0,0,0,0.25)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '0.875rem', textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Budget Used</div>
-                  <div style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--accent-amber)', marginTop: '4px' }}>
-                    ₹{evaluationResult.budgetSpent.toLocaleString()}
-                  </div>
-                  <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', marginTop: '2px' }}>out of ₹10,000</div>
-                </div>
-
-                <div style={{ background: 'rgba(0,0,0,0.25)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '0.875rem', textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Problem Coverage</div>
-                  <div style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--accent-blue)', marginTop: '4px' }}>
-                    {evaluationResult.problemCoverage}%
-                  </div>
-                </div>
-
-                <div style={{ background: 'rgba(0,0,0,0.25)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '0.875rem', textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Safety Coverage</div>
-                  <div style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--accent-red)', marginTop: '4px' }}>
-                    {evaluationResult.safetyCoverage}%
-                  </div>
-                </div>
-
-                <div style={{ background: 'rgba(0,0,0,0.25)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '0.875rem', textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Resource Recovery</div>
-                  <div style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--accent-purple)', marginTop: '4px' }}>
-                    {evaluationResult.resourceRecovery}%
-                  </div>
-                </div>
-
-                <div style={{ background: 'rgba(0,0,0,0.25)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '0.875rem', textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Life Extension</div>
-                  <div style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--accent-green)', marginTop: '4px' }}>
-                    {evaluationResult.lifeExtension}%
-                  </div>
-                </div>
+                {evaluationResult.overallImpact}%
               </div>
-
-              {/* DETAILED BREAKDOWN SECTIONS */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginBottom: '2rem' }}>
-                
-                {/* STRONG DECISIONS */}
-                {evaluationResult.strongDecisions.length > 0 && (
-                  <div style={{ background: 'rgba(0,214,143,0.06)', border: '1px solid rgba(0,214,143,0.25)', borderRadius: 'var(--radius-lg)', padding: '1.125rem 1.25rem' }}>
-                    <div style={{ fontSize: '0.9375rem', fontWeight: 700, color: 'var(--accent-green)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <CheckCircle2 size={16} /> STRONG DECISIONS
-                    </div>
-                    <ul style={{ margin: 0, paddingLeft: '1.25rem', color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.6 }}>
-                      {evaluationResult.strongDecisions.map((sd, idx) => (
-                        <li key={idx} style={{ marginBottom: '0.25rem' }}>{sd}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* WEAK AREAS */}
-                {evaluationResult.weakAreas.length > 0 && (
-                  <div style={{ background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.25)', borderRadius: 'var(--radius-lg)', padding: '1.125rem 1.25rem' }}>
-                    <div style={{ fontSize: '0.9375rem', fontWeight: 700, color: 'var(--accent-amber)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <AlertTriangle size={16} /> WEAK AREAS & RISKS
-                    </div>
-                    <ul style={{ margin: 0, paddingLeft: '1.25rem', color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.6 }}>
-                      {evaluationResult.weakAreas.map((wa, idx) => (
-                        <li key={idx} style={{ marginBottom: '0.25rem' }}>{wa}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* MISSED OPPORTUNITIES */}
-                {evaluationResult.missedOpportunities.length > 0 && (
-                  <div style={{ background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.25)', borderRadius: 'var(--radius-lg)', padding: '1.125rem 1.25rem' }}>
-                    <div style={{ fontSize: '0.9375rem', fontWeight: 700, color: '#60a5fa', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <Sparkles size={16} /> MISSED OPPORTUNITIES
-                    </div>
-                    <ul style={{ margin: 0, paddingLeft: '1.25rem', color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.6 }}>
-                      {evaluationResult.missedOpportunities.map((mo, idx) => (
-                        <li key={idx} style={{ marginBottom: '0.25rem' }}>{mo}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
+              <div style={{ fontSize: '0.8125rem', color: '#94a3b8', fontFamily: 'var(--font-mono)' }}>
+                SYSTEMIC SUSTAINABILITY SCORE
               </div>
+            </div>
 
-              {/* ACTION BUTTON */}
-              <button 
-                className="btn btn-primary btn-lg w-full" 
-                onClick={onComplete} 
+            {/* Metrics Breakdown (Single Column Grid) */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              gap: '0.5rem',
+            }}>
+              <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: '14px', padding: '0.75rem', textAlign: 'center' }}>
+                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Problem Coverage</div>
+                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#00b4d8' }}>{evaluationResult.problemCoverage}%</div>
+              </div>
+              <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: '14px', padding: '0.75rem', textAlign: 'center' }}>
+                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Safety Coverage</div>
+                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#ef4444' }}>{evaluationResult.safetyCoverage}%</div>
+              </div>
+              <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: '14px', padding: '0.75rem', textAlign: 'center' }}>
+                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Resource Recovery</div>
+                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#c084fc' }}>{evaluationResult.resourceRecovery}%</div>
+              </div>
+              <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: '14px', padding: '0.75rem', textAlign: 'center' }}>
+                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Life Extension</div>
+                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#00d68f' }}>{evaluationResult.lifeExtension}%</div>
+              </div>
+            </div>
+
+            {/* Qualitative Feedback Cards */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {evaluationResult.strongDecisions.length > 0 && (
+                <div style={{ background: 'rgba(0, 214, 143, 0.08)', border: '1.5px solid rgba(0, 214, 143, 0.3)', borderRadius: '16px', padding: '1rem' }}>
+                  <div style={{ fontSize: '0.875rem', fontWeight: 800, color: '#00d68f', marginBottom: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <CheckCircle2 size={16} /> STRONG DECISIONS
+                  </div>
+                  <ul style={{ margin: 0, paddingLeft: '1.25rem', color: '#cbd5e1', fontSize: '0.875rem', lineHeight: 1.5 }}>
+                    {evaluationResult.strongDecisions.map((sd, idx) => (
+                      <li key={idx} style={{ marginBottom: '0.25rem' }}>{sd}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {evaluationResult.weakAreas.length > 0 && (
+                <div style={{ background: 'rgba(245, 158, 11, 0.08)', border: '1.5px solid rgba(245, 158, 11, 0.3)', borderRadius: '16px', padding: '1rem' }}>
+                  <div style={{ fontSize: '0.875rem', fontWeight: 800, color: '#f59e0b', marginBottom: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <AlertTriangle size={16} /> RISKS & WEAK AREAS
+                  </div>
+                  <ul style={{ margin: 0, paddingLeft: '1.25rem', color: '#cbd5e1', fontSize: '0.875rem', lineHeight: 1.5 }}>
+                    {evaluationResult.weakAreas.map((wa, idx) => (
+                      <li key={idx} style={{ marginBottom: '0.25rem' }}>{wa}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            {/* Advance CTA Button */}
+            <div style={{
+              position: 'sticky',
+              bottom: 'calc(var(--bottom-nav-total-height, 70px) + 0.5rem)',
+              zIndex: 40,
+              padding: '0.5rem 0',
+            }}>
+              <button
+                className="btn btn-primary"
+                onClick={onComplete}
                 id="view-impact-report-btn"
-                style={{ justifyContent: 'center' }}
+                style={{ width: '100%', minHeight: '52px', fontSize: '1rem', fontWeight: 800 }}
               >
-                VIEW FINAL ENVIRONMENTAL IMPACT REPORT <ChevronRight size={18} />
+                VIEW FINAL IMPACT REPORT <ChevronRight size={18} />
               </button>
-
             </div>
 
           </div>

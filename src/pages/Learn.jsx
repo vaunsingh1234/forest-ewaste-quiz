@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import { BookOpen, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
+import { BookOpen, ChevronDown, ChevronUp, ExternalLink, Sparkles, Volume2, ArrowRight } from 'lucide-react';
 import { learnTopics, realWorldActions } from '../data/educationalContent';
-
 import { GRADE_LEVELS } from '../data/gradeData';
 import { playGuideChime, speakGuideText } from '../utils/audio';
 
 const colorMap = {
-  green: { bg: 'rgba(34,197,94,0.12)', border: 'rgba(74,222,128,0.3)', text: 'var(--accent-green)' },
-  blue: { bg: 'rgba(56,189,248,0.12)', border: 'rgba(56,189,248,0.3)', text: 'var(--accent-blue)' },
-  red: { bg: 'rgba(239,68,68,0.12)', border: 'rgba(239,68,68,0.3)', text: 'var(--accent-red)' },
-  amber: { bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.3)', text: 'var(--accent-amber)' },
-  purple: { bg: 'rgba(192,132,252,0.12)', border: 'rgba(192,132,252,0.3)', text: 'var(--accent-purple)' },
+  green: { bg: 'rgba(34,197,94,0.12)', border: 'rgba(74,222,128,0.3)', text: '#00d68f' },
+  blue: { bg: 'rgba(56,189,248,0.12)', border: 'rgba(56,189,248,0.3)', text: '#00b4d8' },
+  red: { bg: 'rgba(239,68,68,0.12)', border: 'rgba(239,68,68,0.3)', text: '#ef4444' },
+  amber: { bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.3)', text: '#f59e0b' },
+  purple: { bg: 'rgba(192,132,252,0.12)', border: 'rgba(192,132,252,0.3)', text: '#c084fc' },
 };
 
 export default function Learn({ navigate }) {
@@ -18,25 +17,50 @@ export default function Learn({ navigate }) {
   const [activeTab, setActiveTab] = useState('grades'); // grades | topics | actions
 
   return (
-    <div className="page-enter" style={{ padding: '2rem 0 4rem' }}>
-      <div className="container">
+    <div className="page-enter learn-page" style={{
+      minHeight: '100dvh',
+      padding: 'calc(var(--safe-top, 0px) + 0.75rem) 0.75rem calc(var(--bottom-nav-total-height, 70px) + 1.5rem)',
+      background: 'radial-gradient(ellipse at top, #11281c 0%, #030d07 85%)',
+      color: '#f0fdf4',
+      overflowX: 'hidden',
+    }}>
+      <div className="container" style={{ maxWidth: '640px', margin: '0 auto', padding: '0 0.25rem' }}>
+        
         {/* Header */}
-        <div style={{ marginBottom: '2rem' }}>
-          <div className="data-label" style={{ marginBottom: '0.5rem', color: '#4ade80' }}>JUNIOR ECO-KNOWLEDGE CENTER</div>
-          <h1 style={{ fontSize: '1.75rem', fontFamily: 'var(--font-display)', letterSpacing: '0.05em', marginBottom: '0.5rem', color: '#f0fdf4' }}>
+        <div style={{ marginBottom: '1.25rem' }}>
+          <div className="data-label" style={{ color: '#00d68f', fontSize: '0.75rem', letterSpacing: '0.1em', marginBottom: '0.35rem' }}>
+            JUNIOR ECO-KNOWLEDGE CENTER
+          </div>
+          <h1 style={{
+            fontSize: '1.4rem',
+            fontFamily: 'var(--font-display)',
+            letterSpacing: '0.04em',
+            margin: '0 0 0.35rem',
+            color: '#ffffff',
+            fontWeight: 800,
+          }}>
             LEARN BEFORE YOU PLAY 🌱
           </h1>
-          <p style={{ color: '#bbf7d0', fontSize: '0.9375rem', maxWidth: '620px', lineHeight: 1.7 }}>
-            Comprehensive field manual for Nova City Eco-Cadets! Master e-waste essentials, toxic chemicals, and practical recycling.
+          <p style={{ color: '#cbd5e1', fontSize: '0.875rem', lineHeight: 1.5, margin: 0 }}>
+            Master e-waste principles, toxic material hazards, and circular economy strategies.
           </p>
         </div>
 
-        {/* Tab switcher */}
-        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', padding: '4px', background: 'rgba(255,255,255,0.04)', borderRadius: 'var(--radius-lg)', width: 'fit-content' }}>
+        {/* Responsive Tab Bar (Single Row, No Overflow) */}
+        <div style={{
+          display: 'flex',
+          gap: '0.35rem',
+          marginBottom: '1.25rem',
+          padding: '4px',
+          background: 'rgba(0,0,0,0.4)',
+          borderRadius: '16px',
+          overflowX: 'auto',
+          WebkitOverflowScrolling: 'touch',
+        }}>
           {[
-            { id: 'grades', label: '🌱 Core Directives' },
-            { id: 'topics', label: '📚 Science Topics' },
-            { id: 'actions', label: '🌍 Real World Actions' },
+            { id: 'grades', label: '🌱 Directives' },
+            { id: 'topics', label: '📚 Science' },
+            { id: 'actions', label: '🌍 Real Actions' },
           ].map(tab => (
             <button
               key={tab.id}
@@ -45,17 +69,19 @@ export default function Learn({ navigate }) {
                 setActiveTab(tab.id);
               }}
               style={{
-                padding: '0.5rem 1.25rem',
-                borderRadius: 'var(--radius-md)',
+                flex: 1,
+                minHeight: '44px',
+                padding: '0.45rem 0.5rem',
+                borderRadius: '12px',
                 border: 'none',
                 cursor: 'pointer',
                 fontFamily: 'var(--font-mono)',
                 fontSize: '0.8125rem',
-                fontWeight: 600,
-                background: activeTab === tab.id ? 'var(--bg-card)' : 'transparent',
-                color: activeTab === tab.id ? '#4ade80' : 'var(--text-secondary)',
-                boxShadow: activeTab === tab.id ? '0 0 15px rgba(74, 222, 128, 0.25)' : 'none',
-                transition: 'all 0.2s',
+                fontWeight: 700,
+                background: activeTab === tab.id ? '#22c55e' : 'transparent',
+                color: activeTab === tab.id ? '#071b10' : '#cbd5e1',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.15s ease',
               }}
             >
               {tab.label}
@@ -63,21 +89,23 @@ export default function Learn({ navigate }) {
           ))}
         </div>
 
+        {/* TAB 1: CORE DIRECTIVES (Single Column Cards) */}
         {activeTab === 'grades' && (
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            
+            {/* Pip's Field Briefing */}
             <div style={{
               background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(16, 185, 129, 0.08) 100%)',
               border: '1.5px solid rgba(74, 222, 128, 0.35)',
               borderRadius: '20px',
-              padding: '1.25rem 1.5rem',
-              marginBottom: '1.5rem',
+              padding: '1rem',
               display: 'flex',
               alignItems: 'center',
-              gap: '1rem',
+              gap: '0.85rem',
             }}>
               <div style={{
-                width: '52px',
-                height: '52px',
+                width: '48px',
+                height: '48px',
                 borderRadius: '50%',
                 overflow: 'hidden',
                 border: '2px solid #4ade80',
@@ -86,98 +114,99 @@ export default function Learn({ navigate }) {
                 <img src="/avatars/frog_avatar.jpg" alt="Pip" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
               <div>
-                <h2 style={{ fontSize: '1.1rem', margin: 0, color: '#f0fdf4', fontWeight: 800 }}>
-                  Pip's Environmental Field Manual: Core E-Waste Directives
-                </h2>
-                <p style={{ margin: '0.25rem 0 0', fontSize: '0.86rem', color: '#bbf7d0', lineHeight: 1.5 }}>
-                  Explore core knowledge modules on electronic waste, toxic hazards, resource recovery, and the circular economy. Click any module to listen to Pip explain!
-                </p>
+                <div style={{ fontSize: '0.9375rem', fontWeight: 800, color: '#f0fdf4' }}>
+                  Pip's Environmental Field Manual
+                </div>
+                <div style={{ fontSize: '0.8125rem', color: '#bbf7d0', lineHeight: 1.4, marginTop: '2px' }}>
+                  Tap "Listen" on any directive to hear audio guidance!
+                </div>
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.25rem' }}>
-              {GRADE_LEVELS.map(g => (
-                <div
-                  key={g.id}
-                  style={{
-                    background: 'linear-gradient(180deg, rgba(16, 44, 30, 0.9) 0%, rgba(9, 26, 18, 0.95) 100%)',
-                    border: '1.5px solid rgba(74, 222, 128, 0.25)',
-                    borderRadius: '22px',
-                    padding: '1.5rem',
-                    boxShadow: '0 8px 30px rgba(0,0,0,0.4)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '1rem',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                      <span style={{ fontSize: '2rem' }}>{g.icon}</span>
-                      <div>
-                        <div style={{ fontWeight: 800, fontSize: '1.1rem', color: '#f0fdf4' }}>
-                          Module {g.id} • {g.name}
-                        </div>
-                        <div style={{ fontSize: '0.72rem', color: '#86efac', fontFamily: 'var(--font-mono)' }}>
-                          Directive: {g.badge}
-                        </div>
+            {/* Directive Cards (1-Column) */}
+            {GRADE_LEVELS.map(g => (
+              <div
+                key={g.id}
+                style={{
+                  background: 'rgba(6, 30, 18, 0.85)',
+                  border: '1.5px solid rgba(74, 222, 128, 0.25)',
+                  borderRadius: '20px',
+                  padding: '1.15rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.75rem',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                    <span style={{ fontSize: '1.8rem', lineHeight: 1 }}>{g.icon}</span>
+                    <div>
+                      <div style={{ fontWeight: 800, fontSize: '1rem', color: '#ffffff' }}>
+                        {g.name}
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: '#4ade80', fontFamily: 'var(--font-mono)' }}>
+                        Directive: {g.badge}
                       </div>
                     </div>
-
-                    <button
-                      onClick={() => {
-                        playGuideChime('hint');
-                        speakGuideText(`${g.name}: ${g.description}. ${g.eWasteConcept}. ${g.superRule}`);
-                      }}
-                      title="Read aloud with Pip"
-                      style={{
-                        background: 'rgba(74, 222, 128, 0.15)',
-                        border: '1px solid rgba(74, 222, 128, 0.3)',
-                        borderRadius: '10px',
-                        color: '#4ade80',
-                        padding: '4px 10px',
-                        fontSize: '0.75rem',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.35rem',
-                        fontWeight: 600,
-                      }}
-                    >
-                      <span>🔊 Listen</span>
-                    </button>
                   </div>
 
-                  <div style={{
-                    background: 'rgba(7, 21, 14, 0.7)',
-                    border: '1px solid rgba(74, 222, 128, 0.15)',
-                    borderRadius: '14px',
-                    padding: '0.85rem 1rem',
-                    fontSize: '0.85rem',
-                    color: '#f0fdf4',
-                    lineHeight: 1.6,
-                  }}>
-                    {g.eWasteConcept}
-                  </div>
-
-                  <div style={{
-                    background: 'rgba(245, 158, 11, 0.1)',
-                    border: '1px solid rgba(245, 158, 11, 0.3)',
-                    borderRadius: '12px',
-                    padding: '0.6rem 0.85rem',
-                    fontSize: '0.8rem',
-                    color: '#fef3c7',
-                    fontWeight: 600,
-                  }}>
-                    ⚡ {g.superRule}
-                  </div>
+                  <button
+                    onClick={() => {
+                      playGuideChime('hint');
+                      speakGuideText(`${g.name}: ${g.description}. ${g.eWasteConcept}. ${g.superRule}`);
+                    }}
+                    style={{
+                      minHeight: '36px',
+                      background: 'rgba(74, 222, 128, 0.15)',
+                      border: '1px solid rgba(74, 222, 128, 0.4)',
+                      borderRadius: '10px',
+                      color: '#4ade80',
+                      padding: '4px 10px',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.35rem',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <Volume2 size={14} />
+                    <span>Listen</span>
+                  </button>
                 </div>
-              ))}
-            </div>
+
+                <div style={{
+                  background: 'rgba(0, 0, 0, 0.4)',
+                  borderRadius: '12px',
+                  padding: '0.75rem',
+                  fontSize: '0.875rem',
+                  color: '#f0fdf4',
+                  lineHeight: 1.5,
+                }}>
+                  {g.eWasteConcept}
+                </div>
+
+                <div style={{
+                  background: 'rgba(245, 158, 11, 0.12)',
+                  border: '1px solid rgba(245, 158, 11, 0.3)',
+                  borderRadius: '12px',
+                  padding: '0.6rem 0.75rem',
+                  fontSize: '0.8125rem',
+                  color: '#fef3c7',
+                  fontWeight: 600,
+                }}>
+                  ⚡ {g.superRule}
+                </div>
+              </div>
+            ))}
+
           </div>
         )}
 
+        {/* TAB 2: SCIENCE TOPICS (Single Column Accordion Cards) */}
         {activeTab === 'topics' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             {learnTopics.map(topic => {
               const colors = colorMap[topic.color] || colorMap.green;
               const isExpanded = expandedTopic === topic.id;
@@ -186,37 +215,35 @@ export default function Learn({ navigate }) {
                 <div
                   key={topic.id}
                   style={{
-                    background: 'var(--bg-card)',
-                    border: `1px solid ${isExpanded ? colors.border : 'var(--border-card)'}`,
-                    borderRadius: 'var(--radius-xl)',
+                    background: 'rgba(6, 30, 18, 0.85)',
+                    border: `1.5px solid ${isExpanded ? colors.border : 'rgba(74, 222, 128, 0.2)'}`,
+                    borderRadius: '20px',
                     overflow: 'hidden',
-                    transition: 'border-color 0.2s',
                   }}
                 >
-                  {/* Topic header */}
                   <button
                     onClick={() => setExpandedTopic(isExpanded ? null : topic.id)}
                     style={{
                       width: '100%',
+                      minHeight: '64px',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '0.875rem',
-                      padding: '1.25rem',
+                      gap: '0.75rem',
+                      padding: '1rem',
                       background: 'none',
                       border: 'none',
                       cursor: 'pointer',
                       textAlign: 'left',
+                      color: '#ffffff',
                     }}
-                    aria-expanded={isExpanded}
-                    id={`learn-topic-${topic.id}`}
                   >
                     <div style={{
-                      fontSize: '1.75rem',
-                      width: '48px',
-                      height: '48px',
+                      fontSize: '1.6rem',
+                      width: '44px',
+                      height: '44px',
                       background: colors.bg,
                       border: `1px solid ${colors.border}`,
-                      borderRadius: 'var(--radius-md)',
+                      borderRadius: '12px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -224,72 +251,58 @@ export default function Learn({ navigate }) {
                     }}>
                       {topic.icon}
                     </div>
-                    <div style={{ flex: 1 }}>
-                      <h3 style={{ fontSize: '0.9375rem', fontWeight: 600, marginBottom: '0.25rem' }}>
+
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: '0.9375rem', fontWeight: 800, color: '#ffffff' }}>
                         {topic.title}
-                      </h3>
-                      <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                      </div>
+                      <div style={{ fontSize: '0.8125rem', color: '#94a3b8', lineHeight: 1.3, marginTop: '2px' }}>
                         {topic.summary}
-                      </p>
+                      </div>
                     </div>
-                    <div style={{ flexShrink: 0, color: 'var(--text-muted)' }}>
-                      {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+
+                    <div style={{ color: '#94a3b8', flexShrink: 0 }}>
+                      {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                     </div>
                   </button>
 
-                  {/* Expanded content */}
                   {isExpanded && (
-                    <div style={{
-                      padding: '0 1.25rem 1.25rem',
-                      animation: 'fadeDown 0.3s ease',
-                    }}>
-                      <div style={{ height: '1px', background: 'var(--border-subtle)', marginBottom: '1.25rem' }} />
+                    <div style={{ padding: '0 1rem 1.25rem', animation: 'fadeDown 0.25s ease' }}>
+                      <div style={{ height: '1px', background: 'rgba(255,255,255,0.08)', marginBottom: '1rem' }} />
 
-                      {/* Content sections */}
                       {topic.content.map((section, i) => (
-                        <div key={i} style={{ marginBottom: '1rem' }}>
-                          <h4 style={{
-                            fontSize: '0.875rem',
-                            fontWeight: 600,
-                            color: colors.text,
-                            marginBottom: '0.375rem',
-                          }}>
+                        <div key={i} style={{ marginBottom: '0.85rem' }}>
+                          <h4 style={{ fontSize: '0.875rem', fontWeight: 800, color: colors.text, margin: '0 0 0.25rem 0' }}>
                             {section.heading}
                           </h4>
-                          <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
+                          <p style={{ fontSize: '0.875rem', color: '#cbd5e1', lineHeight: 1.5, margin: 0 }}>
                             {section.text}
                           </p>
                         </div>
                       ))}
 
-                      {/* Quick facts */}
+                      {/* Quick Facts */}
                       <div style={{
-                        marginTop: '1rem',
-                        padding: '1rem',
+                        marginTop: '0.85rem',
+                        padding: '0.85rem',
                         background: colors.bg,
                         border: `1px solid ${colors.border}`,
-                        borderRadius: 'var(--radius-lg)',
+                        borderRadius: '14px',
                       }}>
                         <div style={{
                           fontFamily: 'var(--font-mono)',
-                          fontSize: '0.625rem',
+                          fontSize: '0.75rem',
                           color: colors.text,
-                          letterSpacing: '0.1em',
-                          marginBottom: '0.625rem',
+                          fontWeight: 800,
+                          marginBottom: '0.4rem',
+                          letterSpacing: '0.08em',
                         }}>
                           QUICK FACTS
                         </div>
                         {topic.quickFacts.map((fact, i) => (
-                          <div key={i} style={{
-                            display: 'flex',
-                            gap: '0.5rem',
-                            marginBottom: '0.375rem',
-                            fontSize: '0.8rem',
-                            color: 'var(--text-secondary)',
-                            lineHeight: 1.5,
-                          }}>
+                          <div key={i} style={{ display: 'flex', gap: '0.4rem', fontSize: '0.8125rem', color: '#f0fdf4', marginBottom: '0.25rem', lineHeight: 1.4 }}>
                             <span style={{ color: colors.text, flexShrink: 0 }}>▸</span>
-                            {fact}
+                            <span>{fact}</span>
                           </div>
                         ))}
                       </div>
@@ -301,73 +314,78 @@ export default function Learn({ navigate }) {
           </div>
         )}
 
+        {/* TAB 3: REAL WORLD ACTIONS (Single Column Cards) */}
         {activeTab === 'actions' && (
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             <div style={{
-              background: 'rgba(0,214,143,0.06)',
-              border: '1px solid rgba(0,214,143,0.2)',
-              borderRadius: 'var(--radius-xl)',
-              padding: '1.25rem 1.5rem',
-              marginBottom: '1.5rem',
+              background: 'rgba(0, 214, 143, 0.1)',
+              border: '1.5px solid #00d68f',
+              borderRadius: '20px',
+              padding: '1.15rem',
             }}>
-              <h2 style={{ fontSize: '1rem', marginBottom: '0.375rem', color: 'var(--accent-green)' }}>
-                🌍 TAKE IT OUTSIDE THE GAME
+              <h2 style={{ fontSize: '1.05rem', margin: '0 0 0.35rem 0', color: '#00d68f', fontWeight: 800 }}>
+                🌍 TAKE ACTION IN THE REAL WORLD
               </h2>
-              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                The best environmental impact happens in the real world. Here are concrete actions you can take today.
+              <p style={{ fontSize: '0.875rem', color: '#cbd5e1', lineHeight: 1.5, margin: 0 }}>
+                Knowledge matters most when practiced! Apply these 3 essential habits in your everyday tech usage:
               </p>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
-              {realWorldActions.map((action, i) => (
-                <div
-                  key={i}
-                  style={{
-                    background: 'var(--bg-card)',
-                    border: '1px solid var(--border-card)',
-                    borderRadius: 'var(--radius-xl)',
-                    padding: '1.25rem',
-                    transition: 'all 0.2s',
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.borderColor = 'var(--border-accent)';
-                    e.currentTarget.style.boxShadow = 'var(--shadow-green)';
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.borderColor = 'var(--border-card)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                >
-                  <div style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>{action.icon}</div>
-                  <h3 style={{ fontSize: '0.9375rem', fontWeight: 600, marginBottom: '0.375rem' }}>
+            {realWorldActions.map((action, i) => (
+              <div
+                key={i}
+                style={{
+                  background: 'rgba(6, 30, 18, 0.85)',
+                  border: '1.5px solid rgba(74, 222, 128, 0.25)',
+                  borderRadius: '20px',
+                  padding: '1.15rem',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '0.85rem',
+                }}
+              >
+                <div style={{ fontSize: '2.25rem', lineHeight: 1, flexShrink: 0 }}>{action.icon}</div>
+                <div>
+                  <h3 style={{ fontSize: '0.9375rem', fontWeight: 800, color: '#ffffff', margin: '0 0 0.25rem 0' }}>
                     {action.action}
                   </h3>
-                  <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                  <p style={{ fontSize: '0.875rem', color: '#cbd5e1', lineHeight: 1.5, margin: 0 }}>
                     {action.detail}
                   </p>
                 </div>
-              ))}
-            </div>
-
-            {/* CTA */}
-            <div style={{
-              marginTop: '2rem',
-              padding: '1.5rem',
-              background: 'var(--bg-card)',
-              border: '1px solid var(--border-card)',
-              borderRadius: 'var(--radius-xl)',
-              textAlign: 'center',
-            }}>
-              <h3 style={{ marginBottom: '0.75rem' }}>Ready to put knowledge into action?</h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '1.25rem' }}>
-                Start the investigation and apply everything you've learned to Nova City's e-waste crisis.
-              </p>
-              <button className="btn btn-primary btn-lg" onClick={() => navigate('home')}>
-                START INVESTIGATION
-              </button>
-            </div>
+              </div>
+            ))}
           </div>
         )}
+
+        {/* Sticky Action Button at Bottom: Begin Investigation */}
+        <div style={{
+          position: 'sticky',
+          bottom: 'calc(var(--bottom-nav-total-height, 70px) + 0.5rem)',
+          zIndex: 40,
+          padding: '0.5rem 0',
+        }}>
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate('map')}
+            style={{
+              width: '100%',
+              minHeight: '52px',
+              fontSize: '1rem',
+              fontWeight: 800,
+              boxShadow: '0 8px 25px rgba(0, 214, 143, 0.4)',
+              borderRadius: '16px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem',
+            }}
+          >
+            <span>ENTER NOVA SANCTUARY MAP</span>
+            <ArrowRight size={18} />
+          </button>
+        </div>
+
       </div>
     </div>
   );

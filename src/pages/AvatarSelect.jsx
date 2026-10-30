@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { Sparkles, Shield, Zap, Check, ArrowRight, Dices, Award, Heart, Info, RefreshCw, Compass } from 'lucide-react';
+import { Sparkles, Shield, Zap, Check, ArrowRight, Dices, Award, Heart, Info, RefreshCw } from 'lucide-react';
 import { AVATAR_HEADGEAR, AVATAR_OUTFITS, DEFAULT_AVATAR } from '../data/avatars';
 
 export default function AvatarSelect({ gameState, updateAvatar, onProceed, navigate }) {
-  const currentAvatar = gameState.avatar || DEFAULT_AVATAR;
+  const currentAvatar = gameState?.avatar || DEFAULT_AVATAR;
   
   const [selectedHeadgearId, setSelectedHeadgearId] = useState(currentAvatar.headgearId || 'frog');
   const [selectedOutfitId, setSelectedOutfitId] = useState(currentAvatar.outfitId || 'eco_ranger');
-  const [playerName, setPlayerName] = useState(gameState.playerName || 'Officer Nova');
+  const [playerName, setPlayerName] = useState(gameState?.playerName || 'Officer Nova');
   const [equippedNotice, setEquippedNotice] = useState(false);
+  const [activeTab, setActiveTab] = useState('headgear'); // 'headgear' | 'outfit'
 
   const selectedHeadgear = AVATAR_HEADGEAR.find(h => h.id === selectedHeadgearId) || AVATAR_HEADGEAR[0];
   const selectedOutfit = AVATAR_OUTFITS.find(o => o.id === selectedOutfitId) || AVATAR_OUTFITS[0];
@@ -28,7 +29,7 @@ export default function AvatarSelect({ gameState, updateAvatar, onProceed, navig
     };
     updateAvatar(newAvatar);
     setEquippedNotice(true);
-    setTimeout(() => setEquippedNotice(false), 2000);
+    setTimeout(() => setEquippedNotice(false), 1800);
   };
 
   const handleSelectOutfit = (outfit) => {
@@ -56,7 +57,7 @@ export default function AvatarSelect({ gameState, updateAvatar, onProceed, navig
       tag: randomHead.tag,
     });
     setEquippedNotice(true);
-    setTimeout(() => setEquippedNotice(false), 2000);
+    setTimeout(() => setEquippedNotice(false), 1800);
   };
 
   const handleConfirmAndProceed = () => {
@@ -73,7 +74,7 @@ export default function AvatarSelect({ gameState, updateAvatar, onProceed, navig
     };
     updateAvatar(finalAvatar);
     if (onProceed) {
-      onProceed(gameState.playerName || playerName || 'Eco Cadet', finalAvatar);
+      onProceed(gameState?.playerName || playerName || 'Eco Cadet', finalAvatar);
     } else {
       navigate('briefing');
     }
@@ -81,408 +82,355 @@ export default function AvatarSelect({ gameState, updateAvatar, onProceed, navig
 
   return (
     <div className="page-enter avatar-studio-page" style={{
-      minHeight: 'calc(100dvh - 4rem)',
-      padding: '1.5rem 1rem 4rem',
+      minHeight: '100dvh',
+      padding: 'calc(var(--safe-top, 0px) + 0.75rem) 0.75rem calc(var(--bottom-nav-total-height, 70px) + 1.5rem)',
       background: 'radial-gradient(ellipse at top, #133a27 0%, #06150e 85%)',
+      color: '#f0fdf4',
+      overflowX: 'hidden',
     }}>
-      <div className="container" style={{ maxWidth: '1200px' }}>
+      <div className="container" style={{ maxWidth: '640px', margin: '0 auto', padding: '0 0.25rem' }}>
+        
         {/* Studio Top Header */}
+        <div style={{ marginBottom: '1.25rem' }}>
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+            background: 'rgba(74, 222, 128, 0.12)',
+            border: '1px solid rgba(74, 222, 128, 0.3)',
+            borderRadius: '100px',
+            padding: '0.2rem 0.75rem',
+            marginBottom: '0.4rem',
+          }}>
+            <Sparkles size={14} color="#4ade80" />
+            <span style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.75rem',
+              color: '#86efac',
+              letterSpacing: '0.1em',
+              fontWeight: 700,
+            }}>
+              CHIBI WARDROBE & ECO-PERKS
+            </span>
+          </div>
+
+          <h1 style={{
+            fontSize: '1.4rem',
+            fontFamily: 'var(--font-display)',
+            fontWeight: 800,
+            margin: '0 0 0.35rem 0',
+            color: '#ffffff',
+          }}>
+            EQUIP YOUR ECO-SUIT
+          </h1>
+          <p style={{
+            margin: 0,
+            color: '#cbd5e1',
+            fontSize: '0.875rem',
+            lineHeight: 1.5,
+          }}>
+            Select headgear and field suit before stepping into Nova Sanctuary. Each grants special eco perks!
+          </p>
+        </div>
+
+        {/* Character Showcase Card (Single-Column) */}
         <div style={{
+          background: 'linear-gradient(180deg, rgba(16, 44, 30, 0.95) 0%, rgba(9, 26, 18, 0.98) 100%)',
+          border: '1.5px solid rgba(74, 222, 128, 0.35)',
+          borderRadius: '24px',
+          padding: '1.25rem',
+          marginBottom: '1.25rem',
+          boxShadow: '0 12px 35px rgba(0,0,0,0.5)',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '1rem',
-          marginBottom: '1.75rem',
+          gap: '1.25rem',
+          position: 'relative',
         }}>
-          <div>
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              background: 'rgba(74, 222, 128, 0.12)',
-              border: '1px solid rgba(74, 222, 128, 0.3)',
-              borderRadius: '100px',
-              padding: '0.25rem 0.85rem',
-              marginBottom: '0.5rem',
-            }}>
-              <Sparkles size={13} color="#4ade80" />
-              <span style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.6875rem',
-                color: '#86efac',
-                letterSpacing: '0.12em',
-                fontWeight: 600,
-              }}>
-                CHIBI WARDROBE & ECO-PERKS
+          {/* Avatar Portrait */}
+          <div style={{
+            width: '96px',
+            height: '96px',
+            borderRadius: '50%',
+            overflow: 'hidden',
+            border: '3px solid #4ade80',
+            boxShadow: '0 0 25px rgba(74, 222, 128, 0.45)',
+            background: 'radial-gradient(circle, rgba(74, 222, 128, 0.25) 0%, #07150e 80%)',
+            flexShrink: 0,
+            position: 'relative',
+          }}>
+            <img
+              src={selectedHeadgear.avatarImg}
+              alt={selectedHeadgear.name}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          </div>
+
+          {/* Details & Randomize */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.25rem' }}>
+              <span className="badge badge-green" style={{ fontSize: '0.75rem', padding: '2px 8px' }}>
+                {selectedHeadgear.rarity.toUpperCase()}
               </span>
-            </div>
-            <h1 style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)',
-              letterSpacing: '0.04em',
-              fontWeight: 800,
-              color: '#f0fdf4',
-              margin: 0,
-            }}>
-              EQUIP YOUR CHIBI ECO-SUIT
-            </h1>
-            <p style={{
-              margin: '0.25rem 0 0',
-              color: '#bbf7d0',
-              fontSize: '0.9375rem',
-            }}>
-              Select your cute chibi headgear before exploring Nova Sanctuary. Each piece grants special eco perks!
-            </p>
-          </div>
-
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
-            <button
-              onClick={handleRandomize}
-              className="btn btn-secondary"
-              style={{
-                borderRadius: '14px',
-                padding: '0.6rem 1rem',
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(74, 222, 128, 0.25)',
-                color: '#f0fdf4',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-              }}
-            >
-              <Dices size={16} color="#4ade80" />
-              <span>RANDOMIZE</span>
-            </button>
-
-            <button
-              id="confirm-avatar-btn"
-              onClick={handleConfirmAndProceed}
-              className="btn btn-primary"
-              style={{
-                borderRadius: '14px',
-                padding: '0.6rem 1.4rem',
-                background: 'linear-gradient(135deg, #22c55e 0%, #10b981 100%)',
-                color: '#071b10',
-                fontWeight: 800,
-                letterSpacing: '0.02em',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                boxShadow: '0 4px 20px rgba(34, 197, 94, 0.4)',
-              }}
-            >
-              <span>CONFIRM & ENTER BRIEFING</span>
-              <ArrowRight size={16} />
-            </button>
-          </div>
-        </div>
-
-        {/* Main Stage: Left Grid & Right 3D Avatar Display */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'minmax(300px, 420px) 1fr',
-          gap: '2rem',
-          alignItems: 'stretch',
-        }} className="avatar-grid-layout">
-          
-          {/* Left Column: Gear Inventory Grid */}
-          <div style={{
-            background: 'linear-gradient(180deg, rgba(16, 44, 30, 0.95) 0%, rgba(9, 26, 18, 0.98) 100%)',
-            border: '1.5px solid rgba(74, 222, 128, 0.25)',
-            borderRadius: '26px',
-            padding: '1.5rem',
-            boxShadow: '0 12px 40px rgba(0,0,0,0.5)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1.25rem',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div>
-                <div style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.6875rem',
+              <button
+                onClick={handleRandomize}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(74, 222, 128, 0.3)',
+                  borderRadius: '10px',
+                  padding: '0.35rem 0.65rem',
                   color: '#4ade80',
-                  letterSpacing: '0.12em',
-                  fontWeight: 600,
-                }}>
-                  WARDROBE COLLECTION
-                </div>
-                <div style={{
-                  fontSize: '1.15rem',
+                  fontSize: '0.75rem',
+                  fontFamily: 'var(--font-mono)',
                   fontWeight: 700,
-                  color: '#f8fafc',
-                }}>
-                  Choose Headgear
-                </div>
-              </div>
-              <div style={{
-                background: 'rgba(56, 189, 248, 0.15)',
-                color: '#38bdf8',
-                borderRadius: '100px',
-                padding: '0.2rem 0.65rem',
-                fontSize: '0.75rem',
-                fontFamily: 'var(--font-mono)',
-                fontWeight: 600,
-              }}>
-                {AVATAR_HEADGEAR.length} ITEMS
-              </div>
-            </div>
-
-            {/* Inventory Grid: 2 columns, exactly like reference image */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: '1rem',
-            }}>
-              {AVATAR_HEADGEAR.map((item) => {
-                const isSelected = selectedHeadgearId === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => handleSelectHeadgear(item)}
-                    style={{
-                      position: 'relative',
-                      aspectRatio: '1',
-                      borderRadius: '20px',
-                      background: isSelected
-                        ? 'linear-gradient(145deg, #182d54 0%, #0d1b33 100%)'
-                        : 'linear-gradient(145deg, rgba(21, 35, 62, 0.7) 0%, rgba(13, 21, 39, 0.7) 100%)',
-                      border: isSelected
-                        ? '2.5px solid #facc15'
-                        : '1.5px solid rgba(255, 255, 255, 0.08)',
-                      boxShadow: isSelected
-                        ? '0 0 20px rgba(250, 204, 21, 0.35), inset 0 0 15px rgba(250, 204, 21, 0.1)'
-                        : '0 4px 15px rgba(0,0,0,0.3)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      padding: '0.5rem',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                      transform: isSelected ? 'scale(1.03)' : 'scale(1)',
-                    }}
-                    title={item.name}
-                  >
-                    {/* Selected Checkmark Badge (matching reference) */}
-                    {isSelected && (
-                      <div style={{
-                        position: 'absolute',
-                        top: '8px',
-                        right: '8px',
-                        width: '22px',
-                        height: '22px',
-                        borderRadius: '50%',
-                        background: '#facc15',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
-                        zIndex: 2,
-                      }}>
-                        <Check size={14} color="#090e1a" strokeWidth={3} />
-                      </div>
-                    )}
-
-                    {/* Headgear item icon */}
-                    <div style={{
-                      width: '72%',
-                      height: '72%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      filter: isSelected ? 'drop-shadow(0 4px 12px rgba(250, 204, 21, 0.3))' : 'none',
-                    }}>
-                      <img
-                        src={item.icon}
-                        alt={item.name}
-                        style={{
-                          maxWidth: '100%',
-                          maxHeight: '100%',
-                          objectFit: 'contain',
-                        }}
-                      />
-                    </div>
-
-                    <div style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.6875rem',
-                      color: isSelected ? '#facc15' : '#94a3b8',
-                      fontWeight: 600,
-                      marginTop: '0.25rem',
-                      textAlign: 'center',
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      maxWidth: '90%',
-                    }}>
-                      {item.name.split(' ')[0]}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Right Column: 3D Character Podium Stage */}
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1.25rem',
-          }}>
-            {/* Pedestal Stage Banner */}
-            <div style={{
-              flex: 1,
-              minHeight: '440px',
-              position: 'relative',
-              borderRadius: '26px',
-              overflow: 'hidden',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              boxShadow: '0 16px 50px rgba(0,0,0,0.6)',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              background: '#091024',
-            }}>
-              {/* Character Background Image */}
-              <div style={{
-                position: 'absolute',
-                inset: 0,
-                backgroundImage: `url(${selectedHeadgear.avatarImg})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                transition: 'opacity 0.3s ease',
-              }} />
-
-              {/* Gradient Vignette Overlays for Depth */}
-              <div style={{
-                position: 'absolute',
-                inset: 0,
-                background: 'radial-gradient(circle at center, transparent 40%, rgba(8, 13, 26, 0.85) 95%)',
-                pointerEvents: 'none',
-              }} />
-
-              <div style={{
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                right: 0,
-                height: '160px',
-                background: 'linear-gradient(to top, rgba(9, 14, 26, 0.95), transparent)',
-                pointerEvents: 'none',
-              }} />
-
-              {/* Top Status Chips */}
-              <div style={{
-                position: 'relative',
-                zIndex: 3,
-                padding: '1.25rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}>
-                <div style={{
-                  background: 'rgba(9, 14, 26, 0.85)',
-                  backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
-                  borderRadius: '100px',
-                  padding: '0.35rem 0.9rem',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.5rem',
-                }}>
-                  <div style={{
-                    width: '10px',
-                    height: '10px',
-                    borderRadius: '50%',
-                    background: '#00d68f',
-                    boxShadow: '0 0 10px #00d68f',
-                  }} />
-                  <span style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.75rem',
-                    color: '#e2e8f0',
-                    fontWeight: 600,
-                  }}>
-                    SANCTUARY PEDESTAL
-                  </span>
-                </div>
+                  gap: '0.35rem',
+                  cursor: 'pointer',
+                }}
+              >
+                <Dices size={14} />
+                <span>SHUFFLE</span>
+              </button>
+            </div>
 
-                {equippedNotice && (
-                  <div style={{
-                    background: 'rgba(250, 204, 21, 0.95)',
-                    color: '#090e1a',
-                    borderRadius: '100px',
-                    padding: '0.35rem 0.9rem',
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
-                    boxShadow: '0 0 15px rgba(250, 204, 21, 0.5)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.35rem',
-                    animation: 'bounce 0.5s ease',
-                  }}>
-                    <Check size={14} />
-                    <span>EQUIPPED!</span>
-                  </div>
-                )}
-              </div>
+            <h3 style={{ margin: '0 0 0.2rem', fontSize: '1.05rem', color: '#ffffff', fontWeight: 800 }}>
+              {selectedHeadgear.name}
+            </h3>
 
-              {/* Bottom Character Info Bar */}
-              <div style={{
-                position: 'relative',
-                zIndex: 3,
-                padding: '1.5rem',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.75rem',
-              }}>
-                <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
-                  <div>
-                    <div style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.6875rem',
-                      color: '#00d68f',
-                      letterSpacing: '0.12em',
-                      fontWeight: 600,
-                      marginBottom: '0.2rem',
-                    }}>
-                      LEVEL 1 • ECO INVESTIGATOR
-                    </div>
-                    <div style={{
-                      fontFamily: 'var(--font-display)',
-                      fontSize: '1.5rem',
-                      fontWeight: 800,
-                      color: '#ffffff',
-                      textShadow: '0 2px 10px rgba(0,0,0,0.8)',
-                    }}>
-                      {gameState.playerName || playerName || 'Eco Cadet'}
-                    </div>
-                  </div>
+            <div style={{ fontSize: '0.8125rem', color: '#00b4d8', fontFamily: 'var(--font-mono)', marginBottom: '0.35rem' }}>
+              Suit: {selectedOutfit.name}
+            </div>
 
-                  <div style={{
-                    display: 'flex',
-                    gap: '0.5rem',
-                    alignItems: 'center',
-                  }}>
-                    <div style={{
-                      background: 'rgba(15, 23, 42, 0.85)',
-                      backdropFilter: 'blur(8px)',
-                      border: '1px solid rgba(255,255,255,0.1)',
-                      borderRadius: '12px',
-                      padding: '0.4rem 0.75rem',
-                      textAlign: 'center',
-                    }}>
-                      <div style={{ fontSize: '0.625rem', fontFamily: 'var(--font-mono)', color: '#94a3b8' }}>SELECTED GEAR</div>
-                      <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#38bdf8' }}>{selectedHeadgear.name}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div style={{
+              background: 'rgba(74, 222, 128, 0.12)',
+              border: '1px solid rgba(74, 222, 128, 0.25)',
+              borderRadius: '8px',
+              padding: '0.25rem 0.5rem',
+              fontSize: '0.75rem',
+              color: '#86efac',
+              fontWeight: 600,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+            }}>
+              <Zap size={12} />
+              <span>{selectedHeadgear.bonus}</span>
             </div>
           </div>
         </div>
+
+        {/* Tab Switcher: Headgear vs Eco-Suits */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '0.5rem',
+          marginBottom: '1rem',
+          background: 'rgba(0,0,0,0.4)',
+          padding: '4px',
+          borderRadius: '16px',
+        }}>
+          <button
+            onClick={() => setActiveTab('headgear')}
+            style={{
+              minHeight: '44px',
+              borderRadius: '12px',
+              border: 'none',
+              background: activeTab === 'headgear' ? '#22c55e' : 'transparent',
+              color: activeTab === 'headgear' ? '#071b10' : '#cbd5e1',
+              fontWeight: 800,
+              fontSize: '0.875rem',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.4rem',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            <span>👒</span>
+            <span>HEADGEAR ({AVATAR_HEADGEAR.length})</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('outfit')}
+            style={{
+              minHeight: '44px',
+              borderRadius: '12px',
+              border: 'none',
+              background: activeTab === 'outfit' ? '#22c55e' : 'transparent',
+              color: activeTab === 'outfit' ? '#071b10' : '#cbd5e1',
+              fontWeight: 800,
+              fontSize: '0.875rem',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.4rem',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            <span>👔</span>
+            <span>ECO-SUITS ({AVATAR_OUTFITS.length})</span>
+          </button>
+        </div>
+
+        {/* Tab 1: Headgear Grid */}
+        {activeTab === 'headgear' && (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))',
+            gap: '0.65rem',
+            marginBottom: '1.5rem',
+          }}>
+            {AVATAR_HEADGEAR.map(gear => {
+              const isSelected = selectedHeadgearId === gear.id;
+              return (
+                <button
+                  key={gear.id}
+                  onClick={() => handleSelectHeadgear(gear)}
+                  style={{
+                    background: isSelected ? 'rgba(34, 197, 94, 0.2)' : 'rgba(255, 255, 255, 0.04)',
+                    border: `1.5px solid ${isSelected ? '#22c55e' : 'rgba(255, 255, 255, 0.08)'}`,
+                    borderRadius: '16px',
+                    padding: '0.75rem 0.5rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    textAlign: 'center',
+                    position: 'relative',
+                    transition: 'all 0.15s ease',
+                    minHeight: '120px',
+                  }}
+                >
+                  {isSelected && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '6px',
+                      right: '6px',
+                      width: '20px',
+                      height: '20px',
+                      borderRadius: '50%',
+                      background: '#22c55e',
+                      color: '#071b10',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                      <Check size={13} strokeWidth={3} />
+                    </div>
+                  )}
+
+                  <div style={{
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '50%',
+                    overflow: 'hidden',
+                    border: `1.5px solid ${isSelected ? '#22c55e' : 'rgba(255,255,255,0.2)'}`,
+                  }}>
+                    <img src={gear.avatarImg} alt={gear.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+
+                  <div style={{ fontSize: '0.875rem', fontWeight: 700, color: '#ffffff', lineHeight: 1.2 }}>
+                    {gear.name}
+                  </div>
+
+                  <div style={{ fontSize: '0.75rem', color: '#86efac', fontFamily: 'var(--font-mono)' }}>
+                    {gear.tag}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Tab 2: Outfits List (Single Column Full-Width Cards) */}
+        {activeTab === 'outfit' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.5rem' }}>
+            {AVATAR_OUTFITS.map(outfit => {
+              const isSelected = selectedOutfitId === outfit.id;
+              return (
+                <button
+                  key={outfit.id}
+                  onClick={() => handleSelectOutfit(outfit)}
+                  style={{
+                    width: '100%',
+                    minHeight: '56px',
+                    padding: '0.85rem 1rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '0.75rem',
+                    background: isSelected ? 'rgba(34, 197, 94, 0.15)' : 'rgba(255, 255, 255, 0.04)',
+                    border: `1.5px solid ${isSelected ? '#22c55e' : 'rgba(255, 255, 255, 0.1)'}`,
+                    borderRadius: '16px',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    color: '#ffffff',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <div style={{
+                      width: '22px',
+                      height: '22px',
+                      borderRadius: '50%',
+                      border: `2px solid ${isSelected ? '#22c55e' : '#64748b'}`,
+                      background: isSelected ? '#22c55e' : 'transparent',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                    }}>
+                      {isSelected && <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#052e16' }} />}
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.9375rem', fontWeight: 700 }}>{outfit.name}</div>
+                      <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{outfit.description}</div>
+                    </div>
+                  </div>
+
+                  <span className="badge badge-green" style={{ fontSize: '0.75rem', padding: '2px 8px', flexShrink: 0 }}>
+                    {outfit.bonus}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Sticky Action Button at Bottom */}
+        <div style={{
+          position: 'sticky',
+          bottom: 'calc(var(--bottom-nav-total-height, 70px) + 0.5rem)',
+          zIndex: 40,
+          padding: '0.5rem 0',
+        }}>
+          <button
+            id="confirm-avatar-btn"
+            onClick={handleConfirmAndProceed}
+            className="btn btn-primary"
+            style={{
+              width: '100%',
+              minHeight: '52px',
+              fontSize: '1rem',
+              fontWeight: 800,
+              background: 'linear-gradient(135deg, #22c55e 0%, #10b981 100%)',
+              color: '#071b10',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem',
+              boxShadow: '0 8px 25px rgba(34, 197, 94, 0.45)',
+              borderRadius: '16px',
+            }}
+          >
+            <span>CONFIRM SUIT & PROCEED</span>
+            <ArrowRight size={18} />
+          </button>
+        </div>
+
       </div>
     </div>
   );
