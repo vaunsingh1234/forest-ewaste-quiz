@@ -184,7 +184,7 @@ export default function App() {
   };
 
   return (
-    <div className="app" style={{ minHeight: '100vh', background: 'var(--bg-primary)' }}>
+    <div className="app" style={{ minHeight: '100dvh', background: 'var(--bg-primary)' }}>
       <Navbar
         currentPage={currentPage}
         navigate={navigate}
@@ -203,7 +203,7 @@ export default function App() {
         />
       )}
 
-      <main style={{ paddingTop: inMission ? '8rem' : '4rem' }}>
+      <main className={`app-main ${inMission ? 'in-mission' : ''}`}>
         {currentPage === 'home' && (
           <Home
             onStart={handleStartMission}

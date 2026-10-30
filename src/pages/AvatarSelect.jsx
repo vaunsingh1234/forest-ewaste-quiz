@@ -81,7 +81,7 @@ export default function AvatarSelect({ gameState, updateAvatar, onProceed, navig
 
   return (
     <div className="page-enter avatar-studio-page" style={{
-      minHeight: 'calc(100vh - 4rem)',
+      minHeight: 'calc(100dvh - 4rem)',
       padding: '1.5rem 1rem 4rem',
       background: 'radial-gradient(ellipse at top, #133a27 0%, #06150e 85%)',
     }}>

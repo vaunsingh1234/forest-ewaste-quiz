@@ -24,7 +24,7 @@ export default function AchievementsPage({ gameState, navigate }) {
 
   return (
     <div className="page-enter achievements-page" style={{
-      minHeight: 'calc(100vh - 4rem)',
+      minHeight: 'calc(100dvh - 4rem)',
       padding: '2rem 1.25rem 5rem',
       background: 'radial-gradient(ellipse at top, #133a27 0%, #06150e 85%)',
     }}>

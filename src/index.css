@@ -36,6 +36,16 @@
   --border-accent: rgba(74, 222, 128, 0.5);
   --border-blue: rgba(56, 189, 248, 0.35);
 
+  /* Mobile Safe Areas & Core Viewport Metrics */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --bottom-nav-height: 4.25rem;
+  --top-nav-height: 3.5rem;
+  --mobile-hud-height: 3.25rem;
+  --tap-target-min: 44px;
+
   /* Typography */
   --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
@@ -70,7 +80,7 @@
 }
 
 /* ============================================
-   Reset & Base
+   Reset & Base — Mobile-First (Phones: 360px-430px)
    ============================================ */
 
 *, *::before, *::after {
@@ -82,21 +92,41 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  touch-action: manipulation;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 body {
   font-family: var(--font-main);
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  line-height: 1.6;
+  font-size: 1rem; /* 16px minimum body text */
+  line-height: 1.5;
   overflow-x: hidden;
+  width: 100%;
   min-height: 100vh;
+  min-height: 100dvh;
+  touch-action: manipulation;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  padding-left: var(--safe-left);
+  padding-right: var(--safe-right);
 }
 
 #root {
   min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Prevent horizontal overflow from media */
+img, svg, video, canvas, audio, iframe, embed, object {
+  max-width: 100%;
 }
 
 /* ============================================
@@ -126,13 +156,27 @@ h1, h2, h3, h4, h5, h6 {
 .text-secondary { color: var(--text-secondary); }
 
 /* ============================================
-   Layout Utilities
+   Layout Utilities — Mobile-First
    ============================================ */
 
 .container {
-  max-width: 1280px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 0 var(--space-xl);
+  padding: 0 1rem;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 0 var(--space-lg);
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1280px;
+    padding: 0 var(--space-xl);
+  }
 }
 
 .flex { display: flex; }
@@ -182,7 +226,7 @@ h1, h2, h3, h4, h5, h6 {
   padding: 0.625rem 1.25rem;
   border-radius: var(--radius-md);
   font-family: var(--font-main);
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   font-weight: 600;
   letter-spacing: 0.02em;
   cursor: pointer;
@@ -192,6 +236,9 @@ h1, h2, h3, h4, h5, h6 {
   white-space: nowrap;
   position: relative;
   overflow: hidden;
+  min-height: var(--tap-target-min);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .btn::before {
@@ -263,18 +310,32 @@ h1, h2, h3, h4, h5, h6 {
 .btn-lg {
   padding: 0.875rem 2rem;
   font-size: 1rem;
+  min-height: 48px;
 }
 
 .btn-sm {
-  padding: 0.375rem 0.875rem;
-  font-size: 0.8125rem;
+  padding: 0.45rem 0.875rem;
+  font-size: 0.875rem;
+  min-height: var(--tap-target-min);
 }
 
 .btn-icon {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   padding: 0;
   border-radius: var(--radius-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+}
+
+input, select, textarea {
+  font-size: 1rem; /* 16px minimum prevents iOS zoom on focus */
+  font-family: inherit;
+  touch-action: manipulation;
 }
 
 /* ============================================
@@ -678,26 +739,187 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================
-   Responsive
+   App Layout & Viewport Shell (Mobile-First)
    ============================================ */
 
-@media (max-width: 1024px) {
-  .container {
-    padding: 0 var(--space-lg);
+.app-main {
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  flex: 1;
+  /* Mobile-first: space for top safe area & bottom navigation */
+  padding-top: max(0.5rem, var(--safe-top));
+  padding-bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + 1.25rem);
+}
+
+.app-main.in-mission {
+  padding-top: calc(var(--mobile-hud-height) + var(--safe-top) + 0.5rem);
+}
+
+@media (min-width: 769px) {
+  .app-main {
+    padding-top: calc(var(--top-nav-height) + 1rem);
+    padding-bottom: 2.5rem;
+  }
+  .app-main.in-mission {
+    padding-top: calc(var(--top-nav-height) + var(--top-nav-height) + 1.25rem);
   }
 }
 
-@media (max-width: 768px) {
-  .container {
-    padding: 0 var(--space-md);
-  }
+/* ============================================
+   Navigation System (Top on Desktop, Bottom on Mobile)
+   ============================================ */
 
-  html { font-size: 15px; }
+/* Desktop Top Navbar: hidden on mobile, visible on desktop */
+.desktop-navbar {
+  display: none !important;
 }
 
-@media (max-width: 480px) {
-  html { font-size: 14px; }
-  .btn-lg { padding: 0.75rem 1.5rem; }
+@media (min-width: 769px) {
+  .desktop-navbar {
+    display: flex !important;
+  }
+}
+
+/* Mobile Fixed Bottom Navigation Bar: visible on mobile, hidden on desktop */
+.mobile-bottom-nav {
+  display: flex !important;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(var(--bottom-nav-height) + var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
+  background: rgba(6, 21, 14, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(74, 222, 128, 0.25);
+  z-index: 1000;
+  align-items: stretch;
+  justify-content: space-around;
+  box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.65);
+}
+
+@media (min-width: 769px) {
+  .mobile-bottom-nav {
+    display: none !important;
+  }
+}
+
+.mobile-bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-height: var(--tap-target-min);
+  padding: 0.35rem 0.2rem;
+  background: transparent;
+  border: none;
+  color: #86efac;
+  opacity: 0.7;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  touch-action: manipulation;
+  transition: all var(--transition-fast);
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-bottom-nav-item:hover,
+.mobile-bottom-nav-item:focus {
+  opacity: 0.95;
+  color: #f0fdf4;
+}
+
+.mobile-bottom-nav-item.active {
+  opacity: 1;
+  color: var(--accent-green-bright);
+}
+
+.mobile-bottom-nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 18%;
+  right: 18%;
+  height: 2.5px;
+  background: var(--accent-green-bright);
+  box-shadow: 0 0 10px var(--accent-green);
+  border-radius: 0 0 4px 4px;
+}
+
+/* ============================================
+   Chibi Guide Bot (Above mobile bottom nav on phones)
+   ============================================ */
+
+.chibi-guide-container {
+  position: fixed;
+  bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + 0.75rem);
+  right: 0.75rem;
+  z-index: 1050;
+  font-family: var(--font-main);
+  pointer-events: none;
+}
+
+@media (min-width: 769px) {
+  .chibi-guide-container {
+    bottom: 1.25rem;
+    right: 1.25rem;
+  }
+}
+
+/* ============================================
+   Game HUD (Mobile Compact & Desktop Extended)
+   ============================================ */
+
+.game-hud-desktop {
+  display: none !important;
+}
+
+.game-hud-mobile {
+  display: flex !important;
+}
+
+@media (min-width: 769px) {
+  .game-hud-desktop {
+    display: flex !important;
+  }
+  .game-hud-mobile {
+    display: none !important;
+  }
+}
+
+/* ============================================
+   Responsive Visibility Helpers
+   ============================================ */
+
+.hide-on-mobile {
+  display: none !important;
+}
+
+@media (min-width: 769px) {
+  .hide-on-mobile {
+    display: initial !important;
+  }
+  .hide-on-mobile-flex {
+    display: flex !important;
+  }
+}
+
+.hide-on-desktop {
+  display: initial !important;
+}
+
+@media (min-width: 769px) {
+  .hide-on-desktop {
+    display: none !important;
+  }
 }
 
 /* ============================================
@@ -874,13 +1096,24 @@ h1, h2, h3, h4, h5, h6 {
   50% { transform: scale(1.15); opacity: 0.8; }
 }
 
-/* Avatar & Gamer UI responsive layouts */
-@media (max-width: 900px) {
-  .home-hero-grid {
-    grid-template-columns: 1fr !important;
+/* Avatar & Hero UI mobile-first responsive layouts */
+.home-hero-grid,
+.forest-hero-grid,
+.avatar-grid-layout {
+  display: grid;
+  grid-template-columns: 1fr !important;
+  gap: 1.5rem;
+}
+
+@media (min-width: 900px) {
+  .home-hero-grid,
+  .forest-hero-grid {
+    grid-template-columns: minmax(320px, 1.15fr) minmax(300px, 0.85fr) !important;
+    gap: 2.5rem;
   }
   .avatar-grid-layout {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: minmax(300px, 420px) 1fr !important;
+    gap: 2rem;
   }
 }
 

@@ -54,7 +54,7 @@ export default function Briefing({ onAccept, playerName, gameState }) {
 
   return (
     <div className="page-enter" style={{
-      minHeight: '100vh',
+      minHeight: '100dvh',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',

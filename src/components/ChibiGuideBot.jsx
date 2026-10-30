@@ -86,7 +86,7 @@ export default function ChibiGuideBot({
   navigate,
   customHint,
 }) {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(() => typeof window !== 'undefined' ? window.innerWidth > 768 : false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [speechMuted, setSpeechMuted] = useState(false);
   const [activeTab, setActiveTab] = useState('guide'); // 'guide' | 'hint' | 'grade' | 'facts'
@@ -174,14 +174,6 @@ export default function ChibiGuideBot({
     <aside
       className="chibi-guide-container"
       aria-label="Pip the Eco-Guide Assistant"
-      style={{
-        position: 'fixed',
-        bottom: '1.25rem',
-        right: '1.25rem',
-        zIndex: 1050,
-        fontFamily: 'var(--font-main)',
-        pointerEvents: 'none',
-      }}
     >
       <div style={{ pointerEvents: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.6rem' }}>
         

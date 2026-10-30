@@ -29,7 +29,7 @@ export default class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return (
         <div style={{
-          minHeight: '100vh',
+          minHeight: '100dvh',
           background: '#0a0f1a',
           color: '#fff',
           display: 'flex',

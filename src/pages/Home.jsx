@@ -52,12 +52,12 @@ export default function Home({ onStart, gameState, navigate, updateState }) {
   };
 
   return (
-    <div className="page-enter forest-home-page" style={{ minHeight: '100vh', background: '#05130b', color: '#f0fdf4' }}>
+    <div className="page-enter forest-home-page" style={{ minHeight: '100dvh', background: '#05130b', color: '#f0fdf4' }}>
       
       {/* HERO SECTION: CINEMATIC ENCHANTED FOREST (Matching reference design) */}
       <section style={{
         position: 'relative',
-        minHeight: '100vh',
+        minHeight: '100dvh',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
