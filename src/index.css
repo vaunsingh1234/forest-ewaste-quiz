@@ -734,8 +734,13 @@ input, select, textarea {
    Page Transitions
    ============================================ */
 
+@keyframes pageEnterFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 .page-enter {
-  animation: fadeUp 0.4s ease forwards;
+  animation: pageEnterFade 0.25s ease;
 }
 
 /* ============================================
@@ -1111,10 +1116,28 @@ input, select, textarea {
     grid-template-columns: minmax(320px, 1.15fr) minmax(300px, 0.85fr) !important;
     gap: 2.5rem;
   }
+  .mobile-text-center-desktop-left {
+    text-align: left !important;
+  }
   .avatar-grid-layout {
     grid-template-columns: minmax(300px, 420px) 1fr !important;
     gap: 2rem;
   }
+  .city-map-layout {
+    grid-template-columns: minmax(0, 1fr) 350px !important;
+  }
+}
+
+.city-map-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
 }
 
 @keyframes floatGentle {
