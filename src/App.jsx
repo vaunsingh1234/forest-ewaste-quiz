@@ -25,6 +25,7 @@ import UnlockModal from './components/UnlockModal';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import ChibiGuideBot from './components/ChibiGuideBot';
+import InstallPrompt from './components/InstallPrompt';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('loading');
@@ -333,6 +334,7 @@ export default function App() {
       </main>
 
       <AchievementToast achievements={newAchievements} />
+      <InstallPrompt />
       {unlockedModalLevel && (
         <UnlockModal
           level={unlockedModalLevel}

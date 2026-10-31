@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background Gradient -->
+    <radialGradient id="bgGrad" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#0f3d28" />
+      <stop offset="60%" stop-color="#082216" />
+      <stop offset="100%" stop-color="#04100a" />
+    </radialGradient>
+    
+    <!-- Neon Glow Gradient -->
+    <linearGradient id="leafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4ade80" />
+      <stop offset="50%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#10b981" />
+    </linearGradient>
+
+    <!-- Circuit Gold Gradient -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+
+    <!-- Circuit Cyan Accent -->
+    <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" fill="url(#bgGrad)" />
+
+  <!-- Outer Eco-Circuit Ring (Safe Zone friendly, r=192 inside 204 safe radius) -->
+  <circle cx="256" cy="256" r="192" fill="none" stroke="#22c55e" stroke-opacity="0.3" stroke-width="3" stroke-dasharray="14 10" />
+  <circle cx="256" cy="256" r="176" fill="none" stroke="#38bdf8" stroke-opacity="0.2" stroke-width="1.5" />
+
+  <!-- Circuit nodes around the ring (within 80% safe zone: center 256, radius 192 -> 64 to 448) -->
+  <circle cx="256" cy="64" r="7" fill="#4ade80" filter="url(#softGlow)" />
+  <circle cx="448" cy="256" r="7" fill="#38bdf8" filter="url(#softGlow)" />
+  <circle cx="256" cy="448" r="7" fill="#22c55e" filter="url(#softGlow)" />
+  <circle cx="64" cy="256" r="7" fill="#f59e0b" filter="url(#softGlow)" />
+
+  <!-- Microchip Base / Device Frame -->
+  <rect x="146" y="146" width="220" height="220" rx="30" fill="#082015" stroke="#22c55e" stroke-width="4.5" stroke-opacity="0.85" filter="url(#softGlow)" />
+  <rect x="162" y="162" width="188" height="188" rx="22" fill="#05140d" stroke="#10b981" stroke-opacity="0.35" stroke-width="2" />
+
+  <!-- Microchip Pins / Traces -->
+  <!-- Top Pins -->
+  <path d="M186 146 V124 M216 146 V116 M256 146 V112 M296 146 V116 M326 146 V124" stroke="#4ade80" stroke-width="4" stroke-linecap="round" />
+  <!-- Bottom Pins -->
+  <path d="M186 366 V388 M216 366 V396 M256 366 V400 M296 366 V396 M326 366 V388" stroke="#4ade80" stroke-width="4" stroke-linecap="round" />
+  <!-- Left Pins -->
+  <path d="M146 186 H124 M146 216 H116 M146 256 H112 M146 296 H116 M146 326 H124" stroke="#4ade80" stroke-width="4" stroke-linecap="round" />
+  <!-- Right Pins -->
+  <path d="M366 186 H388 M366 216 H396 M366 256 H400 M366 296 H396 M366 326 H388" stroke="#4ade80" stroke-width="4" stroke-linecap="round" />
+
+  <!-- Pin terminal glowing micro-pads -->
+  <circle cx="256" cy="112" r="3.5" fill="#a3e635" />
+  <circle cx="256" cy="400" r="3.5" fill="#a3e635" />
+  <circle cx="112" cy="256" r="3.5" fill="#38bdf8" />
+  <circle cx="400" cy="256" r="3.5" fill="#38bdf8" />
+
+  <!-- Silicon Circuit Traces inside chip -->
+  <path d="M180 190 H220 L238 208" stroke="#38bdf8" stroke-width="3" fill="none" stroke-opacity="0.7" stroke-linecap="round" />
+  <circle cx="180" cy="190" r="4.5" fill="#38bdf8" />
+  
+  <path d="M332 322 H292 L274 304" stroke="#38bdf8" stroke-width="3" fill="none" stroke-opacity="0.7" stroke-linecap="round" />
+  <circle cx="332" cy="322" r="4.5" fill="#38bdf8" />
+
+  <!-- Center Golden Eco-Core (Energy Core) -->
+  <circle cx="256" cy="256" r="34" fill="#0b281b" stroke="url(#goldGrad)" stroke-width="3.5" />
+  <circle cx="256" cy="256" r="19" fill="url(#goldGrad)" opacity="0.9" filter="url(#softGlow)" />
+
+  <!-- Sprouting Cyber-Leaf (Nature reclaiming electronics) -->
+  <path d="M210 320 C210 320, 218 274, 256 238 C294 202, 332 172, 342 152 C344 148, 334 153, 314 162 C270 182, 230 220, 218 266 C212 288, 210 320, 210 320 Z" 
+        fill="url(#leafGrad)" filter="url(#glow)" />
+        
+  <path d="M228 298 C242 270, 276 242, 316 218 C340 204, 356 184, 364 168 C366 164, 356 170, 338 180 C298 204, 260 242, 242 282 C234 298, 228 298, 228 298 Z" 
+        fill="#a3e635" opacity="0.8" />
+
+  <!-- Leaf Vein Circuit Lines -->
+  <path d="M236 268 Q260 248 286 242 M250 246 Q274 230 302 224 M268 224 Q294 210 320 204" 
+        stroke="#f0fdf4" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.95" filter="url(#softGlow)" />
+
+  <!-- Glowing Bio-Luminescent Spore Dots -->
+  <circle cx="342" cy="152" r="6" fill="#f0fdf4" filter="url(#glow)" />
+  <circle cx="364" cy="168" r="4.5" fill="#a3e635" filter="url(#softGlow)" />
+  <circle cx="256" cy="256" r="7" fill="#ffffff" filter="url(#glow)" />
+</svg>

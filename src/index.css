@@ -1150,6 +1150,17 @@ input, select, textarea {
   to { transform: translateY(0); }
 }
 
+@keyframes pwaSlideUp {
+  from {
+    transform: translate(-50%, 30px);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
 @keyframes floatGentle {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-6px); }
